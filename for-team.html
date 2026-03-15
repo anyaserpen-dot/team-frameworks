@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фреймворки команди</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0E0E0D; --surface: #161614; --surface2: #1E1E1B;
+    --border: #2A2A26; --text: #BEBAB2; --muted: #9C9690;
+    --accent: #BF9E32; --green: #5FCB8A; --red: #E85D5D; --blue: #6BB5E8; --purple: #B48AE8;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 48px 32px; max-width: 920px; margin: 0 auto; font-size: 14px; line-height: 1.6; }
+
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 48px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .nav-tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all 0.15s; font-weight: 500; }
+  .nav-tag:hover, .nav-tag.active { border-color: var(--accent); color: var(--accent); }
+
+  .page-header { margin-bottom: 48px; }
+  .page-header p { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .page-header h1 { font-family: 'Instrument Serif', serif; font-size: clamp(36px, 5vw, 56px); line-height: 1.1; }
+  .page-header h1 em { color: var(--accent); font-style: italic; }
+
+  .framework { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; transition: border-color 0.2s; }
+  .framework:hover { border-color: #3A3A36; }
+  .fw-header { display: grid; grid-template-columns: 48px 1fr 28px; align-items: center; gap: 16px; padding: 20px 24px; cursor: pointer; background: var(--surface); }
+  .fw-index { font-family: 'Instrument Serif', serif; font-size: 26px; color: #3A3A36; line-height: 1; transition: color 0.2s; }
+  .framework:hover .fw-index, .fw-body.open ~ * .fw-index { color: var(--accent); }
+  .fw-title-group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .fw-name { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fw-meta-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .fw-tagline { font-size: 11.5px; color: var(--muted); font-weight: 400; }
+  .fw-badges { display: none; }
+  .badge { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; }
+  .badge.time { background: #1E2A1E; color: var(--green); }
+  .badge.group { background: #1A1E2A; color: var(--blue); }
+  .badge.type { background: #2A1E14; color: var(--accent); }
+  .badge.inline { display: inline-flex; }
+  .fw-sep { color: var(--border); font-size: 10px; }
+  .toggle-icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--muted); transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, color 0.2s; flex-shrink: 0; }
+  .framework:hover .toggle-icon { border-color: var(--accent); color: var(--accent); }
+  .toggle-icon:hover { transform: scale(1.15); }
+  .toggle-icon.open { transform: rotate(45deg); color: var(--muted); border-color: var(--border); background: transparent; }
+  .toggle-icon.open:hover { transform: rotate(45deg) scale(1.15); }
+
+  .fw-body { padding: 0 28px 28px; background: var(--surface); border-top: 1px solid var(--border); display: none; }
+  .fw-body.open { display: block; }
+
+  .when-note { background: #141410; border: 1px solid #2E2A14; border-radius: 6px; padding: 13px 18px; margin-top: 20px; font-size: 12.5px; color: #8A8260; line-height: 1.6; }
+  .when-note strong { color: var(--accent); font-weight: 600; }
+
+  .roles-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 4px; }
+  .role-chip { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .role-chip.design { border-color: #4A8A6A; color: #5FCB8A; background: #121E18; }
+  .role-chip.dev { border-color: #3A5A8A; color: #6BB5E8; background: #121420; }
+  .role-chip.manager { border-color: #8A5A3A; color: #E8A547; background: #201610; }
+  .role-chip.seo { border-color: #7A5A8A; color: #B48AE8; background: #181220; }
+  .role-chip.all { border-color: #5A5A4A; color: #C8C4B4; background: #1A1A14; }
+
+  .fw-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .fw-section { background: var(--surface2); border-radius: 6px; padding: 18px 20px; }
+  .fw-section.full { grid-column: span 2; }
+  .fw-section h4 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
+  .fw-section h4.green { color: var(--green); }
+  .fw-section h4.red { color: var(--red); }
+  .fw-section h4.yellow { color: var(--accent); }
+  .fw-section h4.blue { color: var(--blue); }
+  .fw-section ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .fw-section ul li { font-size: 13px; color: var(--muted); line-height: 1.55; padding-left: 16px; position: relative; }
+  .fw-section ul li::before { content: '·'; position: absolute; left: 0; color: #3A3A36; font-size: 18px; line-height: 1.1; }
+  .fw-section ul li strong { color: var(--text); font-weight: 500; }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step { display: flex; gap: 12px; align-items: flex-start; }
+  .step-num { background: var(--border); color: var(--muted); font-size: 10px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .step p strong { color: var(--text); font-weight: 500; }
+
+  .rules-block { background: var(--surface2); border-radius: 6px; padding: 20px 22px; margin-top: 16px; }
+  .rules-block h4 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--accent); margin-bottom: 16px; }
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .rule-item { display: flex; gap: 12px; padding: 10px 12px; border-radius: 4px; }
+  .rule-item:hover { background: #252520; }
+  .rule-num { font-family: 'Instrument Serif', serif; font-size: 22px; color: #3E3E3A; line-height: 1; flex-shrink: 0; width: 22px; margin-top: -2px; }
+  .rule-text { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .rule-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 1px; }
+
+  .manager-block { background: #111A14; border: 1px solid #1E3024; border-radius: 6px; padding: 18px 20px; margin-top: 16px; }
+  .manager-block h4 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: #5FCB8A; margin-bottom: 12px; }
+  .manager-block ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .manager-block ul li { font-size: 13px; color: #8AAE94; line-height: 1.55; padding-left: 20px; position: relative; }
+  .manager-block ul li::before { content: '✦'; position: absolute; left: 0; color: #2A5A3A; font-size: 10px; line-height: 2; }
+  .manager-block ul li strong { color: #A8D8B4; font-weight: 500; }
+
+  .page-footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .page-footer p { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+
+  @media (max-width: 620px) {
+    body { padding: 24px 16px; }
+    .fw-sections { grid-template-columns: 1fr; }
+    .fw-section.full { grid-column: span 1; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .fw-header { grid-template-columns: auto 1fr; }
+    .fw-badges { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p>Пропозиція для обговорення</p>
+  <h1>Що якщо ми<br><em>спробуємо це?</em></h1>
+</div>
+
+<div class="nav">
+  <div class="nav-tag active" onclick="filterAll(this)">Всі</div>
+  <div class="nav-tag" onclick="filterType('diverge', this)">Генерація ідей</div>
+  <div class="nav-tag" onclick="filterType('converge', this)">Прийняття рішень</div>
+  <div class="nav-tag" onclick="filterType('sync', this)">Узгодження</div>
+  <div class="nav-tag" onclick="filterType('audit', this)">Аудит</div>
+</div>
+
+<!-- 01 HMW -->
+<div class="framework" data-type="diverge sync">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">01</div>
+    <div class="fw-title-group">
+      <div class="fw-name">How Might We</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">15–25 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Узгодження</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Переформулювання проблеми в можливість</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Будь-яка зустріч де люди прийшли з різним розумінням проблеми. Розробник думає про баг, SEO про трафік, дизайн про конверсію на клікаут — і всі говорять про різне. HMW зводить це в одну точку. Завжди перед Crazy 8s або Design Sprint.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники</span>
+      <span class="role-chip design">Дизайн — фасилітатор</span>
+      <span class="role-chip manager">Менеджер — бізнес-обмеження</span>
+      <span class="role-chip dev">Розробка — технічні обмеження</span>
+      <span class="role-chip seo">SEO — трафікові гіпотези</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Фасилітатор формулює проблему (5 хв)</strong> — конкретно і нейтрально. Не "у нас поганий продукт", а "70% юзерів, які прийшли з SEO, йдуть зі сторінки готелю не клікнувши на жоден букінг-виджет"</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>Мовчазна генерація (8 хв)</strong> — кожен самостійно пише HMW-питання на окремих стікерах. Одне питання — один стікер. Мінімум 3 питання від кожного.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Зачитування без обговорення (5 хв)</strong> — кожен зачитує свої стікери і вивішує на дошку. Без коментарів і реакцій від інших. Просто вивішуємо все.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Dot voting (3 хв)</strong> — кожен отримує 3 точки. Голосуємо мовчки і одночасно. Можна всі три поставити на одне питання.</p></div>
+          <div class="step"><div class="step-num">5</div><p><strong>Вибір фокусу (3 хв)</strong> — топ-2 питання за голосами стають фокусом сесії. Далі або Crazy 8s, або розподіл як задачі.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>Виявляє розрив</strong> між тим як кожна роль бачить проблему</li>
+          <li><strong>Знімає "не моя зона"</strong> — всі говорять про рішення, не про відповідальність</li>
+          <li><strong>Дає спільну мову</strong> на наступні тижні</li>
+          <li>Можна зробити <strong>асинхронно</strong> — кинути питання в Slack до зустрічі</li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Питання занадто широке — <strong>"Як покращити продукт?" не працює</strong></li>
+          <li>Люди пишуть відповіді замість питань — <strong>фасилітатор зупиняє</strong></li>
+          <li>Обговорення під час зачитування — <strong>суворо заборонено на цьому етапі</strong></li>
+          <li>Пропустили dot voting — <strong>результат хаос без пріоритету</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Формат питання обов'язковий</strong> Починається з "Як ми могли б..." — не "треба зробити", не "чому так"</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Один стікер — одна думка</strong> Не комбінуємо кілька думок в одному формулюванні</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Мовчанка під час генерації</strong> Не підглядаємо, не коментуємо — до зачитування</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Немає поганих питань</strong> Навіть абсурдні або надто широкі — залишають на дошці</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Голосуємо одночасно</strong> Не чекаємо поки інші поставлять точки — уникаємо впливу авторитету</div></div>
+        <div class="rule-item"><div class="rule-num">6</div><div class="rule-text"><strong>Вибраний HMW — фокус сесії</strong> Не повертаємось до нього, якщо не зійшлись на зміні явно</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>Питання змінює якість ідей.</strong> Дослідження показують: формулювання у вигляді питання активує divergent thinking — команда генерує ширший і якісніший діапазон рішень, ніж при стандартному брейншторм-форматі. (BYU Design Review, 2025)</li>
+        <li><strong>Менше "а я думав інакше" після задачі.</strong> 86% провалів на роботі пов'язані з браком комунікації або неефективною співпрацею — HMW синхронізує розуміння проблеми до того, як хтось іде щось робити</li>
+        <li><strong>Продакт і дизайн в одній рамці.</strong> Бізнес-обмеження і UX-гіпотези живуть в одному питанні, не в різних документах — і рішення вже "продане" команді, бо вони самі його сформулювали</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 02 CRAZY 8s -->
+<div class="framework" data-type="diverge">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">02</div>
+    <div class="fw-title-group">
+      <div class="fw-name">Crazy 8s</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">20–30 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Генерація ідей</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">8 варіантів рішення за 8 хвилин — проти перфекціонізму</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Всі кивають або пропонують одне й те саме. Завжди після HMW — потрібен конкретний фокус. Нічого не малюємо — пишемо рішення текстом, логікою, кроками юзера від лендингу до кліку на Booking.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники</span>
+      <span class="role-chip design">Дизайн — фасилітатор і таймер</span>
+      <span class="role-chip manager">Менеджер — бізнес-варіанти рішень</span>
+      <span class="role-chip dev">Розробка — технічні варіанти</span>
+      <span class="role-chip seo">SEO — контентні варіанти</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Підготовка (2 хв)</strong> — фасилітатор нагадує HMW-фокус. Кожен ділить свій аркуш або FigJam-фрейм на 8 рівних частин.</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>Генерація (8 хв, строго)</strong> — кожен мовчки пише 8 різних варіантів рішення. Словами, логікою, послідовністю кроків. Не варіації одного — а справді різні підходи. Якщо не вистачає ідей — свідомо зайди в абсурд або протилежність.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Презентація (2 хв на людину)</strong> — по черзі кожен коротко описує свої 8 варіантів. Без захисту, без аргументів — просто пояснює суть кожного.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Уточнюючі питання (1 хв на людину)</strong> — тільки "що ти маєш на увазі під X". Не "чому так", не "це не спрацює".</p></div>
+          <div class="step"><div class="step-num">5</div><p><strong>Dot voting (3 хв)</strong> — 3 точки по всіх аркушах. Мовчки і одночасно.</p></div>
+          <div class="step"><div class="step-num">6</div><p><strong>Підсумок (3 хв)</strong> — топ-варіанти беремо в Solution Brief або відразу в задачі.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>Знімає авторитет</strong> — junior відповідає нарівні з senior</li>
+          <li>Часовий тиск <strong>вбиває перфекціонізм</strong> і внутрішнього критика</li>
+          <li>8 варіантів <strong>виводять за межі першої очевидної ідеї</strong></li>
+          <li>Розробники пропонують рішення <strong>які реалізуються за день</strong> — решта б не знали</li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Варіації одного рішення — <strong>фасилітатор просить "а протилежність?"</strong></li>
+          <li>Захист варіанту під час презентації — <strong>зупиняємо</strong></li>
+          <li>Обговорення замість уточнень — <strong>тільки питання, не дебати</strong></li>
+          <li>Голосування після обговорення — <strong>groupthink</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Таймер — закон</strong> Рівно 8 хвилин. Не продовжуємо. Недоробленість — частина методу.</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Мовчанка під час генерації</strong> Не питаємо, не коментуємо, не дивимося в чужий аркуш</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>8 різних, не 8 схожих</strong> Якщо закінчились ідеї — пиши абсурд або пряму протилежність</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Без критики під час презентації</strong> "Що ти маєш на увазі" — так. "Це не спрацює бо..." — ні.</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Голосуємо по всіх аркушах</strong> Ставити точки на свій варіант — дозволено, але не обов'язково</div></div>
+        <div class="rule-item"><div class="rule-num">6</div><div class="rule-text"><strong>Результат — вхід, не вихід</strong> Топ-варіант стає фокусом наступного кроку, не автоматичним рішенням</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>Перша ідея майже завжди найслабша.</strong> Перші 2–3 ідеї при брейншторм — очевидні й передбачувані. Змусивши генерувати 8, ми виходимо в зону де починається реальна творчість — це задокументовано в методології Google Ventures Design Sprint</li>
+        <li><strong>Розробники самі пропонують що реалізується швидко.</strong> Продакт і дизайн бачать технічну реальність без окремих груминг-сесій — а це прямий виграш у часі на ітерацію</li>
+        <li><strong>8 варіантів = менше "чому саме це?"</strong> Коли всі бачили альтернативи і проголосували — питань до фінального вибору стає значно менше, бо процес прозорий</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 03 DOT VOTING -->
+<div class="framework" data-type="converge">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">03</div>
+    <div class="fw-title-group">
+      <div class="fw-name">Dot Voting</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">5–10 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Рішення</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Швидке пріоритизування без домінування голосних</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Після генерації є купа варіантів і незрозуміло куди рухатись. Або треба пріоритизувати backlog без нескінченного обговорення. Добре працює коли в кімнаті є люди з дуже різними поглядами на задачу.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники — рівні голоси</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Підготовка (1 хв)</strong> — всі варіанти видимі одночасно. Кожен отримує 3–5 точок (або в FigJam — свій колір).</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>Мовчазне голосування (3 хв)</strong> — всі ставлять точки одночасно і мовчки. Не чекаємо один одного. Можна всі точки поставити на один варіант.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Підрахунок (1 хв)</strong> — фасилітатор рахує вголос. Оголошує топ-варіанти.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Обговорення результату (3–5 хв)</strong> — тільки після підрахунку. Якщо є явний лідер — беремо його. Якщо рівно — ще один раунд між топ-варіантами або додатковий tie-break голос від когось з команди.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>Знімає домінування</strong> гучних або авторитетних людей</li>
+          <li>Швидко <strong>виявляє реальний консенсус</strong> без довгої дискусії</li>
+          <li>Рівний розподіл голосів — <strong>сигнал що потрібно більше інформації</strong></li>
+          <li>Учасник що проголосував <strong>відчуває ownership</strong> результату</li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Голосування після обговорення — <strong>всі слідують авторитету</strong></li>
+          <li>Хтось чекає поки інші проголосують — <strong>фасилітатор запускає одночасно</strong></li>
+          <li>Результат сприймають як фінальне рішення — <strong>це вхід для обговорення</strong></li>
+          <li>Використовують для суто технічних рішень — <strong>там потрібна експертиза, не демократія</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Голосуємо до обговорення</strong> Жодних коментарів до завершення голосування</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Одночасно і мовчки</strong> Не дивимось на чужі точки поки своє не поставив</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Всі точки обов'язково ставимо</strong> Не зберігаємо — всі точки в гру</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Результат — вхід, не вирок</strong> Топ-варіант далі аналізується, не просто виконується</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Технічне вето — після голосування</strong> Якщо варіант неможливий — кажемо після, не до</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>Multivoting на 50% точніший за звичайне голосування.</strong> Дослідження University of Washington (2022): групи з мультиголосуванням були на 50% більш схильні обрати правильний варіант порівняно з plurality або ranked-choice voting</li>
+        <li><strong>Блокує HIPPO-ефект.</strong> HIPPO (Highest Paid Person's Opinion) — задокументований феномен: думка найстаршого за посадою неусвідомлено перекриває всіх. Dot voting робить це структурно неможливим, якщо голосують одночасно і мовчки</li>
+        <li><strong>Ніхто не відчуває що рішення "продавили".</strong> Коли всі голосували — відповідальність спільна. якщо голоси розділились рівно — це сигнал що у нас різне розуміння задачі, і краще це з'ясувати зараз</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 04 1-2-4-ALL -->
+<div class="framework" data-type="sync diverge">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">04</div>
+    <div class="fw-title-group">
+      <div class="fw-name">1–2–4–All</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">20–30 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Узгодження</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Структура що дає голос кожному незалежно від ролі</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> На нараді завжди говорять одні й ті самі. Або тема чутлива і люди обережні. Ретро, планінги, будь-яке обговорення де важливо почути всіх а не тільки найгучніших.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники — рівні на старті</span>
+      <span class="role-chip design">Дизайн — фасилітатор і таймер</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Фасилітатор формулює питання (2 хв)</strong> — одне конкретне питання. "Ми зливаємо SEO-трафік на сторінку готелів, а люди не доходять до кліку на Booking. Де ми їх втрачаємо?"</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>1 — сам (2 хв)</strong> — кожен мовчки записує свою відповідь повними реченнями. Ніхто нікому не показує.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>2 — пара (3 хв)</strong> — обмінюєтесь із сусідом. Мета: знайти спільне. Одна спільна теза від пари.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>4 — четвірка (5 хв)</strong> — дві пари об'єднуються. Одна або дві тези від четвірки.</p></div>
+          <div class="step"><div class="step-num">5</div><p><strong>All — всі (5–10 хв)</strong> — кожна четвірка ділиться тезою. Фасилітатор фіксує на дошці. Коротке обговорення що здивувало.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>100% участь</strong> — ніхто не може змовчати</li>
+          <li>Інтроверти <strong>встигають сформулювати думку</strong> до загального кола</li>
+          <li><strong>Природна фільтрація</strong> ідей через кілька рівнів</li>
+          <li>На виході — <strong>консолідовані теми</strong>, не хаос думок</li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Без таймера — <strong>люди розмовляють занадто довго</strong></li>
+          <li>Розмите питання — <strong>пари не можуть знайти спільне</strong></li>
+          <li>При команді 3–4 — <strong>метод надмірно формальний</strong></li>
+          <li>Непарна кількість — <strong>заздалегідь вирішити хто в трійці</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Кожен пише сам спочатку</strong> Не пропускаємо фазу "1" — вона ключова для незалежності думок</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Шукаємо спільне, не сперечаємось</strong> Мета кожного рівня — знайти перетин, а не довести правоту</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Таймер строгий</strong> Навіть якщо розмова цікава — переходимо далі за сигналом</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Від четвірки — одна теза</strong> Не список ідей, а одне найважливіше спостереження</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>На "All" — без нових ідей</strong> Тільки ділимось результатом четвірки</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>57% учасників нарад відчувають що їхній стиль комунікації не враховується.</strong> 1–2–4–All структурно вирішує це: спочатку думає кожен сам, тільки потім іде до групи — інтроверт приходить на загальне коло вже з позицією (Flowtrace, 2024–2025)</li>
+        <li><strong>Тихі люди нарешті кажуть що думають.</strong> А часто саме вони бачать найточніше — і ці інсайти без структури просто губляться</li>
+        <li><strong>Ретро і планінги стають реально корисними</strong> — замість монологу одного-двох і мовчанки решти, виходить консолідована картина від усіх ролей</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 05 AFFINITY MAPPING -->
+<div class="framework" data-type="converge sync">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">05</div>
+    <div class="fw-title-group">
+      <div class="fw-name">Affinity Mapping</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">25–45 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Рішення</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Знайти патерни і системні проблеми в хаосі думок</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Після брейншторму або ретро є купа стікерів і незрозуміло що з ними робити. Або хочеться зрозуміти де реально болить у команди чи в продукті — без того щоб хтось один формулював за всіх.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники</span>
+      <span class="role-chip design">Дизайн — фасилітатор, називає кластери</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Збір даних (10–15 хв)</strong> — всі пишуть спостереження, болі, ідеї на окремих стікерах. Один стікер — одна думка. Конкретно: не "погана комунікація", а "я дізнаюсь про зміни вимог тільки на ревью".</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>Мовчазне групування (10 хв)</strong> — всі одночасно і мовчки переміщують схожі стікери поряд. Без пояснень. Якщо хочеш перемістити стікер — переміщуй. Інший може перемістити знову — це нормально.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Називання кластерів (5–10 хв)</strong> — разом вголос. Назва — суть проблеми, не перелік слів.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Пріоритизація (5 хв)</strong> — dot voting по кластерах. Найбільший кластер не завжди найважливіший.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>Виявляє системні проблеми</strong> — те що повторюється у кількох людей</li>
+          <li>Перетворює <strong>суб'єктивні відчуття в патерни</strong></li>
+          <li>Мовчазне групування — <strong>без аргументів і захисту</strong></li>
+          <li>Дає <strong>спільне розуміння масштабу</strong> проблем</li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Стікери занадто абстрактні — <strong>групувати нема за що</strong></li>
+          <li>Назви кластерів — <strong>поле для суперечок</strong>, фасилітатор вирішує</li>
+          <li>Плутають кількість стікерів з важливістю — <strong>важливість визначає голосування</strong></li>
+          <li>Асинхронно не працює — <strong>потрібна синхронна сесія</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Один стікер — одна думка</strong> Конкретна і зрозуміла без автора</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Мовчки під час групування</strong> Переміщуємо без пояснень — інтуїція важливіша за аргументи</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Переміщення — нормально</strong> Якщо хтось переніс твій стікер — не повертай без обговорення після</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Назва кластеру — проблема, не перелік</strong> "Відсутність контексту при передачі задач" — так. "Комунікація і задачі" — ні.</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Самотні стікери — теж дані</strong> Не викидаємо те що не потрапило в кластер</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>Перетворює суб'єктивні відчуття на об'єктивні патерни.</strong> Одна скарга — це думка людини. Та сама скарга у п'ятьох — це системна проблема. Affinity mapping робить цю різницю видимою і захищає від рішень на основі найгучнішого голосу</li>
+        <li><strong>Backlog стає реальним списком з пріоритетами.</strong> Команда сама пріоритизує що болить найбільше — і це важче ігнорувати ніж список від одної людини</li>
+        <li><strong>Дизайн і продакт говорять про одні й ті самі кластери</strong> — не кожен про своє. Це прямо зменшує кількість "а ми взагалі про одне говоримо?" на наступних зустрічах</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 06 WORST POSSIBLE IDEA -->
+<div class="framework" data-type="diverge">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">06</div>
+    <div class="fw-title-group">
+      <div class="fw-name">Worst Possible Idea</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">15–20 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Генерація ідей</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Зламати блок через навмисно погані рішення</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Усі обережні або пропонують тільки безпечні варіанти. Добре як розігрів перед важкою темою. Ще підходить якщо після Crazy 8s виявилось що у всіх насправді була одна й та сама ідея.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники</span>
+      <span class="role-chip design">Дизайн — фасилітатор і хранитель фази інверсії</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Фрейм (2 хв)</strong> — фасилітатор формулює задачу навпаки: "Як зробити сторінку готелю такою, щоб людина точно не натиснула на Booking і пішла назад до Google?"</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>Генерація найгірших ідей (5 хв)</strong> — кожен пише найжахливіші рішення. Чим абсурдніше — тим краще.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Зачитування (3 хв)</strong> — по черзі. Сміх допускається. Без пояснень.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Інверсія (5 хв)</strong> — для кожної поганої ідеї: "А що є прямою протилежністю?" Записуємо. Це і є результат.</p></div>
+          <div class="step"><div class="step-num">5</div><p><strong>Dot voting по інверсіях (3 хв)</strong> — вибираємо найцікавіші для наступного кроку.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>Знімає страх помилитись</strong> — ціль якраз помилятись</li>
+          <li>Розблоковує команду <strong>краще ніж "давайте думайте креативно"</strong></li>
+          <li>Виявляє <strong>неочевидні рішення</strong> через інверсію</li>
+          <li>Розряджає атмосферу на <strong>складних і напружених темах</strong></li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Застрягли в жартах — <strong>фасилітатор суворо переводить в інверсію</strong></li>
+          <li>Інверсія занадто очевидна — <strong>"зроби все навпаки" не рахується</strong></li>
+          <li>Хтось починає коментувати "це нереально" під час генерації <strong>— фаза не спрацює, зупиняємо одразу</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Чим гірше — тим краще</strong> Реалістичні погані ідеї не рахуються. Потрібен абсурд.</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Без коментарів під час генерації</strong> Все що написали — залишається на дошці до інверсії</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Фаза інверсії — обов'язкова</strong> Без неї метод не має сенсу. Фасилітатор стежить.</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Інверсія — конкретна</strong> Не "роби навпаки", а "замість X — конкретно Y"</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Результат — інверсії</strong> На dot voting ідуть інвертовані рішення, не погані ідеї</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>Страх помилки вбиває генерацію.</strong> Психологічна безпека — один з ключових факторів ефективності команд за дослідженням Google Project Aristotle. Worst Possible Idea знімає тиск структурно: помилятись — це завдання, а не ризик</li>
+        <li><strong>Команда розкривається рівномірно</strong> — не тільки ті хто зазвичай говорить першими. Сміх і абсурд рівняють ієрархію краще ніж будь-яке "тут немає поганих ідей"</li>
+        <li><strong>Інверсії дають несподівані й реалістичні рішення</strong> — те що прийшло через абсурд, прийшло б набагато довше звичайним шляхом — або не прийшло б взагалі</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 07 DESIGN SPRINT LIGHT -->
+<div class="framework" data-type="diverge converge sync">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">07</div>
+    <div class="fw-title-group">
+      <div class="fw-name">Design Sprint Light</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">90–120 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Повний цикл</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Повний цикл від проблеми до рішення за 2 години</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Є реальна задача яка потребує рішення від кількох ролей одночасно. Раз на місяць — не по абстрактному "підвищимо конверсію", а по конкретному: наприклад CTR на клікаут до Booking падає і незрозуміло чому.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники</span>
+      <span class="role-chip design">Дизайн — фасилітатор всього спринту</span>
+      <span class="role-chip manager">Менеджер — метрика успіху на старті</span>
+      <span class="role-chip dev">Розробка — feasibility на Solution Brief</span>
+      <span class="role-chip seo">SEO — трафіковий контекст на Define</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Структура спринту</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Define (20 хв)</strong> — погоджуємо: яка метрика скаже що рішення спрацювало? Які обмеження? Хто є юзер? Фіксуємо на дошці — це anchor спринту. Не змінюється в процесі.</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>HMW (15 хв)</strong> — генерація питань, dot voting, вибір 1–2 фокусних HMW. Детально — фреймворк 01.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Crazy 8s (20 хв)</strong> — 8 варіантів рішення по вибраному HMW. Dot voting. Детально — фреймворк 02.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Solution Brief (25 хв)</strong> — кожен деталізує один варіант текстом: що робимо, яка логіка, кроки, що потрібно від кожної ролі. Без UI. Розробники додають оцінку складності.</p></div>
+          <div class="step"><div class="step-num">5</div><p><strong>Decide (15 хв)</strong> — кожен презентує Brief за 2 хв. Dot voting. Фіксуємо фінальне рішення.</p></div>
+          <div class="step"><div class="step-num">6</div><p><strong>Next Steps (10 хв)</strong> — ім'я + дія + дедлайн для кожного. Яку гіпотезу перевіряємо і як дізнаємось що вона підтвердилась.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li>Команда виходить з <strong>конкретним рішенням і спільним ownership</strong></li>
+          <li>замінює кілька нарад де всі розходяться без конкретики</li>
+          <li>Всі ролі рівноцінні — <strong>ієрархія не працює в цьому форматі</strong></li>
+          <li>Є <strong>задокументована логіка рішення</strong>, не тільки "вирішили зробити X"</li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Розмита проблема на Define — <strong>2 години даремно без anchor</strong></li>
+          <li>Solution Brief стає UI — <strong>тільки логіка і кроки</strong></li>
+          <li>Немає Next Steps з відповідальними — <strong>рішення лишається на дошці</strong></li>
+          <li>Рішення змінюється після спринту одноосібно — <strong>підриває довіру до процесу для всієї команди</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Anchor — закон</strong> Define-артефакт не змінюється під час спринту. Сумніви — зупиняємось і переформулюємо разом на старті.</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Solution Brief — текст, не візуал</strong> Логіка, кроки, ролі. Ніяких мокапів або схем інтерфейсу.</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Таймери строгі</strong> Навіть якщо не закінчили — переходимо далі. Незавершеність обговорюється на ретро.</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Next Steps — конкретні</strong> "Хтось подумає" — не next step. Ім'я + дія + дедлайн.</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Фінальне рішення — письмово</strong> До кінця дня. Не "ми зрозуміли на зустрічі".</div></div>
+        <div class="rule-item"><div class="rule-num">6</div><div class="rule-text"><strong>Рішення спринту — гіпотеза</strong> Якщо не спрацювала — це нормально і корисно. Не провал.</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>64% регулярних нарад не мають структурованого порядку денного.</strong> Design Sprint Light — це протилежність: жорстка структура, таймери, артефакт на виході. замінює кілька нарад де всі розходяться без конкретики (Flowtrace, 2024–2025)</li>
+        <li><strong>Продакт і дизайн будують рішення разом від початку</strong> — не дизайн приносить макет, а продакт має зауваження. Всі ролі рівноцінні, ніхто не може сказати "мене не питали"</li>
+        <li><strong>Є письмова логіка рішення.</strong> Solution Brief фіксує чому саме так вирішили. Через місяць зрозуміло контекст — а це напряму знижує кількість "а навіщо ми це взагалі зробили?" при наступних ітераціях</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 08 COLLABORATIVE AUDIT -->
+<div class="framework" data-type="audit">
+  <div class="fw-header" onclick="toggle(this)">
+    <div class="fw-index">08</div>
+    <div class="fw-title-group">
+      <div class="fw-name">Спільний продуктовий аудит</div>
+      <div class="fw-meta-row">
+        <span class="badge time inline">60–90 хв</span>
+        <span class="fw-sep">·</span>
+        <span class="badge type inline">Аудит</span>
+        <span class="fw-sep">·</span>
+        <span class="fw-tagline">Вся команда проходить продукт як юзер — разом</span>
+      </div>
+    </div>
+    <div class="toggle-icon">+</div>
+  </div>
+  <div class="fw-body">
+    <div class="when-note">
+      <strong>Коли:</strong> Раз на квартал. Розробник бачить де щось відвалюється технічно, SEO де не вистачає контенту для кліку, продакт де ми не виконуємо обіцянку з оголошення, дизайн де юзер губиться до того як дійти до Booking. Разом закривається повна картина.
+    </div>
+    <div class="roles-row">
+      <span class="role-chip all">Всі учасники — різні лінзи</span>
+      <span class="role-chip design">Дизайн — фасилітатор, UX-лінза</span>
+      <span class="role-chip manager">Менеджер — бізнес/обіцянки-лінза</span>
+      <span class="role-chip dev">Розробка — технічна/перформанс-лінза</span>
+      <span class="role-chip seo">SEO — контент/трафік-лінза</span>
+    </div>
+    <div class="fw-sections">
+      <div class="fw-section full">
+        <h4 class="blue">Покроковий процес</h4>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><p><strong>Підготовка (5 хв)</strong> — фасилітатор формулює сценарій: "Ти зайшов з Google, шукаєш готель в Амстердамі на довгі вихідні. Сайт бачиш вперше. Нічого не знаєш про нас.". Всі переключаються в режим юзера, не свого фаху.</p></div>
+          <div class="step"><div class="step-num">2</div><p><strong>Мовчазний прохід (15–20 хв)</strong> — кожен самостійно проходить продукт по сценарію. Записує спостереження на стікерах: що здивувало, що незрозуміло, де зупинився, що викликало довіру або недовіру.</p></div>
+          <div class="step"><div class="step-num">3</div><p><strong>Зачитування по колу (10 хв)</strong> — кожен зачитує стікери і вивішує. Без обговорення на цьому етапі.</p></div>
+          <div class="step"><div class="step-num">4</div><p><strong>Affinity mapping (10–15 хв)</strong> — мовчазне групування, потім називання кластерів. Детально — фреймворк 05.</p></div>
+          <div class="step"><div class="step-num">5</div><p><strong>Пріоритизація і next steps (10 хв)</strong> — dot voting по кластерах → топ-3 в backlog з власниками і дедлайнами до кінця сесії.</p></div>
+        </div>
+      </div>
+      <div class="fw-section">
+        <h4 class="green">Що дає</h4>
+        <ul>
+          <li><strong>Кожна роль бачить продукт по-своєму</strong> — разом повна картина</li>
+          <li>Команда <strong>розуміє юзера</strong>, а не тільки свою частину роботи</li>
+          <li>те що давно треба було виправити нарешті потрапляє в список</li>
+          <li>Менеджер бачить де <strong>обіцянки розходяться з реальністю</strong></li>
+        </ul>
+      </div>
+      <div class="fw-section">
+        <h4 class="red">Часті помилки</h4>
+        <ul>
+          <li>Без конкретного сценарію — <strong>кожен дивиться різне</strong></li>
+          <li>Технічні ролі фіксують баги замість UX — <strong>фасилітатор нагадує лінзу юзера</strong></li>
+          <li>Результати не конвертуються в задачі — <strong>аудит без follow-up = витрачений час</strong></li>
+          <li>Аудит без сценарію — <strong>кожен переглядає "свою" частину</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rules-block">
+      <h4>Правила для всіх учасників</h4>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-num">1</div><div class="rule-text"><strong>Ти — юзер, не фахівець</strong> Під час проходу вимикаємо свою роль повністю</div></div>
+        <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Пишемо спостереження, не рішення</strong> "Незрозуміло чому ціна без дат" — так. "Треба додати datepicker" — ні.</div></div>
+        <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Конкретно і від першої особи</strong> "Я не зрозумів цю кнопку" — так. "Юзери не розуміють" — ні.</div></div>
+        <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Мовчки і незалежно</strong> Не порівнюємо спостереження до загального зачитування</div></div>
+        <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Топ-3 → backlog з власниками</strong> До кінця сесії. Без власника і дедлайну — не задача, а побажання.</div></div>
+      </div>
+    </div>
+    <div class="manager-block">
+      <h4>Чому це варто спробувати</h4>
+      <ul>
+        <li><strong>Кожна роль бачить різне —</strong> Дослідження PMC (2017): різноманітні групи краще шукають гіпотези про стан продукту — кожна роль бачить інший набір проблем. Разом виходить те що жодна людина не побачить наодинці</li>
+        <li><strong>Продакт бачить розрив між тим що обіцяли і тим що є</strong> — без окремих досліджень і репортів. Дизайн отримує пріоритети з голосів усієї команди, а не з відчуттів</li>
+        <li><strong>Спільний backlog замість окремих списків у кожного</strong> — одне джерело правди що реально болить, яке прийшло від людей з різних точок зору на продукт</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="page-footer">
+  <p>Фокус на рішеннях, не на візуалі · Всі методи для міксованої команди</p>
+</div>
+
+<style>
+  .spark {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 13px;
+    opacity: 0;
+    animation: sparkFly 0.75s cubic-bezier(0.22,1,0.36,1) forwards;
+    user-select: none;
+  }
+  @keyframes sparkFly {
+    0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+    60%  { opacity: 0.8; }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.4) rotate(var(--tr)); }
+  }
+</style>
+
+<script>
+  const SPARKS_PER_TYPE = {
+    'diverge sync': ['✦','💡','✦','💬','✦'],
+    'diverge':      ['✦','🧠','💡','✦','🔥'],
+    'converge':     ['✦','🗳️','✦','👆','✦'],
+    'sync':         ['✦','🤝','💬','✦','👥'],
+    'converge sync':['✦','📋','✦','💡','🗳️'],
+    'diverge converge sync': ['✦','🚀','✦','💡','🗳️'],
+    'audit':        ['✦','🔍','✦','👁️','✦'],
+  };
+  const DEFAULT_SPARKS = ['✦','💫','✦','⚡','✦'];
+
+  function spawnSparks(header) {
+    const framework = header.closest('.framework');
+    const type = (framework.dataset.type || '').trim();
+    const chars = SPARKS_PER_TYPE[type] || DEFAULT_SPARKS;
+    const rect = header.getBoundingClientRect();
+    const cx = rect.left + rect.width * 0.5;
+    const cy = rect.top  + rect.height * 0.5;
+
+    chars.forEach((ch, i) => {
+      const el = document.createElement('span');
+      el.className = 'spark';
+      el.textContent = ch;
+      const angle = (i / chars.length) * Math.PI * 2 - Math.PI / 2;
+      const r = 36 + Math.random() * 28;
+      const tx = Math.cos(angle) * r;
+      const ty = Math.sin(angle) * r;
+      const tr = (Math.random() * 60 - 30) + 'deg';
+      el.style.cssText = `
+        left:${cx}px; top:${cy}px;
+        --tx:${tx}px; --ty:${ty}px; --tr:${tr};
+        animation-delay:${i * 0.04}s;
+        color:${['#BF9E32','#5FCB8A','#6BB5E8','#B48AE8','#E85D5D'][i % 5]};
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    });
+  }
+
+  function toggle(header) {
+    const framework = header.closest('.framework');
+    const body = framework.querySelector('.fw-body');
+    const icon = header.querySelector('.toggle-icon');
+    const wasOpen = body.classList.contains('open');
+    body.classList.toggle('open');
+    icon.classList.toggle('open');
+    if (!wasOpen) spawnSparks(header);
+  }
+  function filterAll(el) {
+    document.querySelectorAll('.framework').forEach(f => f.style.display = '');
+    document.querySelectorAll('.nav-tag').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function filterType(type, el) {
+    document.querySelectorAll('.framework').forEach(f => {
+      f.style.display = (f.dataset.type || '').includes(type) ? '' : 'none';
+    });
+    document.querySelectorAll('.nav-tag').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Для Влади ✦</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F8F8F6;
+  --card: #FFFFFF;
+  --card-hover: #FAFAFA;
+  --border: rgba(0,0,0,0.07);
+  --border-strong: rgba(0,0,0,0.12);
+  --text: #0D0D0D;
+  --text-2: #2A2A2A;
+  --muted: #7A7A7A;
+  --accent: #7C3AED;
+  --accent-light: rgba(124,58,237,0.08);
+  --accent-mid: rgba(124,58,237,0.18);
+  --gold: #C49A00;
+  --gold-light: rgba(245,196,0,0.1);
+  --sage: #A07800;
+  --sage-light: rgba(245,196,0,0.1);
+  --plum: #5B21B6;
+  --plum-light: rgba(91,33,182,0.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+  --red: #DC2626;
+  --red-light: rgba(220,38,38,0.07);
+  --green: #059669;
+  --green-light: rgba(5,150,105,0.08);
+  --teal: #0891B2;
+  --teal-light: rgba(8,145,178,0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 0 0 80px;
+  /* grain texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+}
+
+/* HEADER ZONE */
+.hero {
+  padding: 56px 40px 40px;
+  max-width: 780px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.hero-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid var(--accent-mid);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.hero-sparkles {
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: #F5C400;
+  opacity: 0.7;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 7vw, 68px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-weight: 500;
+  color: #C49A00;
+}
+
+.hero-desc {
+  font-size: 14.5px;
+  color: var(--text-2);
+  max-width: 520px;
+  line-height: 1.75;
+  margin-bottom: 28px;
+}
+
+/* PILL ROW */
+.pill-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.pill:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+.pill-rose  { color: var(--accent); border-color: var(--accent-mid); background: var(--accent-light); }
+.pill-sage  { color: var(--teal);   border-color: rgba(8,145,178,0.2); background: var(--teal-light); }
+.pill-gold  { color: var(--gold);   border-color: rgba(176,124,48,0.2); background: var(--gold-light); }
+.pill-plum  { color: var(--green);  border-color: rgba(5,150,105,0.2); background: var(--green-light); }
+
+/* STICKY FILTER */
+.filter-zone {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 14px 40px;
+  max-width: 780px;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(248,248,246,0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.filter-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  color: var(--text);
+  border-color: var(--text);
+  background: rgba(0,0,0,0.03);
+}
+
+.filter-btn.active {
+  color: var(--accent);
+  background: var(--accent-light);
+  border-color: var(--accent-mid);
+  font-weight: 600;
+}
+
+.filter-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* CARDS LIST */
+.cards {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+  animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+.card.open {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(124,58,237,0.22);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card:nth-child(1) { animation-delay: 0.04s; }
+.card:nth-child(2) { animation-delay: 0.09s; }
+.card:nth-child(3) { animation-delay: 0.14s; }
+.card:nth-child(4) { animation-delay: 0.19s; }
+.card:nth-child(5) { animation-delay: 0.24s; }
+.card:nth-child(6) { animation-delay: 0.29s; }
+.card:nth-child(7) { animation-delay: 0.34s; }
+.card:nth-child(8) { animation-delay: 0.39s; }
+
+/* CARD HEADER */
+.card-hd {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-hd:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius);
+}
+
+.card-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--border-strong);
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+.card.open .card-num { color: var(--accent); }
+
+.card-title { font-size: 15.5px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 2px; }
+.card-sub   { font-size: 12px; color: var(--muted); }
+
+.card-meta { display: flex; gap: 7px; align-items: center; }
+
+.meta-time {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: var(--green-light);
+  border: 1px solid rgba(5,150,105,0.2);
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.meta-type {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid var(--accent-mid);
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  background: transparent;
+}
+
+.card:hover .toggle { border-color: var(--accent-mid); color: var(--accent); }
+.card.open .toggle {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: rotate(45deg);
+}
+
+/* SMOOTH ACCORDION via CSS grid */
+.card-bd-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s cubic-bezier(0.4,0,0.2,1);
+  border-top: 1px solid transparent;
+}
+
+.card.open .card-bd-wrap {
+  grid-template-rows: 1fr;
+  border-top-color: rgba(0,0,0,0.1);
+}
+
+.card-bd-inner {
+  overflow: hidden;
+}
+
+.card-bd {
+  padding: 20px 22px 24px;
+}
+
+/* WHEN NOTE */
+.when-note {
+  background: var(--gold-light);
+  border: 1px solid rgba(176,124,48,0.15);
+  border-radius: var(--radius-sm);
+  padding: 11px 15px;
+  font-size: 13px;
+  color: #7A5A20;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+.when-note strong { color: #A07800; font-weight: 600; }
+
+/* GRID */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid2-full { grid-column: span 2; }
+
+/* BOX */
+.box {
+  background: #F9F6F1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.box h5 {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.box h5.rose   { color: var(--accent); }
+.box h5.teal   { color: var(--teal); }
+.box h5.green  { color: var(--green); }
+.box h5.red    { color: var(--red); }
+.box h5.sage   { color: var(--teal); }
+.box h5.gold   { color: var(--gold); }
+.box h5.plum   { color: var(--plum); }
+
+
+
+.box ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.box ul li {
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+.box ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+[style*="rgba(220,38,38"] .box ul li::before { background: var(--red); opacity: 0.5; }
+.box ul li strong { color: var(--text); font-weight: 500; }
+
+/* STEPS */
+.steps { display: flex; flex-direction: column; gap: 10px; }
+.step {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+  cursor: default;
+}
+.step:hover { background: var(--accent-light); }
+.step:hover .step-n { background: var(--accent); color: white; border-color: var(--accent); }
+
+.step-n {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-mid);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.15s ease;
+}
+
+.step p { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+.step p strong { color: var(--text); font-weight: 600; }
+
+/* BENEFIT BLOCK */
+.benefit-block {
+  background: linear-gradient(135deg, rgba(124,58,237,0.07) 0%, rgba(245,196,0,0.04) 100%);
+  border: 1px solid var(--accent-mid);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px 18px;
+  margin-top: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating decorative sparkles */
+.benefit-block .floaters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.benefit-block .floater {
+  position: absolute;
+  font-size: 11px;
+  opacity: 0;
+  animation: floatUp var(--dur, 4s) var(--delay, 0s) ease-in-out infinite;
+  color: var(--accent);
+  user-select: none;
+}
+
+@keyframes floatUp {
+  0%   { opacity: 0;    transform: translateY(0)    scale(0.7) rotate(var(--rot0, 0deg)); }
+  15%  { opacity: 0.35; }
+  50%  { opacity: 0.2;  transform: translateY(-28px) scale(1)   rotate(var(--rot1, 15deg)); }
+  85%  { opacity: 0.35; }
+  100% { opacity: 0;    transform: translateY(-52px) scale(0.6) rotate(var(--rot2, -10deg)); }
+}
+
+.benefit-title {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.benefit-block ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.benefit-block ul li {
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.6;
+  padding-left: 18px;
+  position: relative;
+}
+.benefit-block ul li::before {
+  content: '♥';
+  position: absolute;
+  left: 0; top: 2px;
+  font-size: 9px;
+  color: var(--accent);
+}
+.benefit-block ul li strong { color: var(--text); font-weight: 600; }
+
+/* PM POWER */
+.pm-power {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(124,58,237,0.06);
+  border: 1px solid rgba(124,58,237,0.18);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pm-power::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 50%, rgba(124,58,237,0.04) 100%);
+  pointer-events: none;
+}
+
+.pm-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  filter: brightness(1.2);
+}
+
+.pm-text { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
+.pm-text strong { color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 5px; margin-bottom: 3px; font-size: 13px; }
+.pm-text strong::before { content: "✦"; font-size: 10px; opacity: 0.7; }
+
+/* HIDDEN CARD */
+.card.hidden {
+  display: none;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+  font-size: 14px;
+  display: none;
+}
+.empty-state.visible { display: block; }
+
+/* FOOTER */
+.footer {
+  max-width: 780px;
+  margin: 48px auto 0;
+  padding: 24px 40px 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-left {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.footer-right {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* SPARKLE CURSOR EFFECT */
+.sparkle-pop {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 14px;
+  animation: sparklePop 0.7s ease forwards;
+}
+
+@keyframes sparklePop {
+  0%   { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(-48px) scale(0.4) rotate(30deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .hero { padding: 36px 20px 28px; }
+  .filter-zone { padding: 12px 20px; }
+  .cards { padding: 0 20px; }
+  .grid2 { grid-template-columns: 1fr; }
+  .grid2-full { grid-column: span 1; }
+  .card-hd { grid-template-columns: 36px 1fr; }
+  .card-meta { display: none; }
+  .footer { padding: 20px 20px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span class="hero-tag">Для Влади · Junior PMM</span>
+    <span class="hero-sparkles">✦ ♥ ✦</span>
+  </div>
+  <h1>Пропозиція<br>від <em>твоєї бесті</em></h1>
+  <p class="hero-desc">Це не дизайнерські штуки. Це структуровані методи для команди — щоб зустрічі мали конкретний вихід, команда рухалась в одному напрямку, і рішення приймались разом — а не по колу погоджувались потім.</p>
+  <div class="pill-row">
+    <span class="pill pill-rose">♥ Менше нарад без виходу</span>
+    <span class="pill pill-sage">✦ Команда рухається в одному напрямку</span>
+    <span class="pill pill-gold">✦ Рішення з доказами</span>
+    <span class="pill pill-plum">♥ Команда відчуває що її чують</span>
+  </div>
+</div>
+
+<!-- STICKY FILTER -->
+<div class="filter-zone">
+  <span class="filter-label">Тип</span>
+  <button class="filter-btn active" data-filter="all"       onclick="filter(this)">Всі</button>
+  <button class="filter-btn"        data-filter="diverge"   onclick="filter(this)">Генерація</button>
+  <button class="filter-btn"        data-filter="converge"  onclick="filter(this)">Рішення</button>
+  <button class="filter-btn"        data-filter="sync"      onclick="filter(this)">Узгодження</button>
+  <button class="filter-btn"        data-filter="audit"     onclick="filter(this)">Аудит</button>
+  <span class="filter-count" id="count">8 практик</span>
+</div>
+
+<!-- CARDS -->
+<div class="cards" id="cardList">
+
+<!-- 01 HMW -->
+<div class="card" data-type="sync diverge">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">01</div>
+    <div>
+      <div class="card-title">How Might We ✦</div>
+      <div class="card-sub">Переформулювання проблеми в можливість</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">15–25 хв</span>
+      <span class="meta-type">Узгодження</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner">
+      <div class="card-bd">
+        <div class="when-note"><strong>Коли:</strong> Люди на зустрічі говорять про різне — розробник про технічний борг, SEO про трафік, дизайн про конверсію на клікаут. HMW зводить це в одну задачу. Завжди перед Crazy 8s або Design Sprint.</div>
+        <div class="grid2" style="margin-bottom:12px">
+          <div class="box grid2-full">
+            <h5 class="rose">Як проходить</h5>
+            <div class="steps">
+              <div class="step"><div class="step-n">1</div><p><strong>Ти формулюєш проблему (5 хв)</strong> — конкретно, з метрикою. "Ми платимо за SEO-трафік, людина лендить на сторінку готелю і йде без кліку на Booking. Де ламається ланцюжок?"</p></div>
+              <div class="step"><div class="step-n">2</div><p><strong>Команда мовчки пише HMW-питання (8 хв)</strong> — кожен на стікерах. Одне питання — один стікер.</p></div>
+              <div class="step"><div class="step-n">3</div><p><strong>Зачитування без обговорення (5 хв)</strong> — всі стікери на дошці, ніяких реакцій до кінця.</p></div>
+              <div class="step"><div class="step-n">4</div><p><strong>Dot voting (3 хв)</strong> — 3 точки кожному, мовчки і одночасно.</p></div>
+              <div class="step"><div class="step-n">5</div><p><strong>Топ-2 → фокус сесії</strong> — далі Crazy 8s або відразу задачі.</p></div>
+            </div>
+          </div>
+          <div class="box">
+            <h5 class="teal">Що отримує команда</h5>
+            <ul>
+              <li>Видно де у всіх <strong>різне розуміння проблеми</strong></li>
+              <li>Знімає "не моя зона" — <strong>всі говорять про рішення</strong></li>
+              <li>Можна зробити <strong>асинхронно до зустрічі</strong></li>
+            </ul>
+          </div>
+          <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+            <h5 class="red">На що звернути увагу</h5>
+            <ul>
+              <li>Широке питання не спрацює — <strong>потрібно конкретно і вузько</strong></li>
+              <li>Хтось пише відповідь замість питання — <strong>нагадуємо формат</strong></li>
+              <li>Без голосування — <strong>результат хаос</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="benefit-block">
+          <div class="benefit-title">♥ Чому тобі це зайде</div>
+          <ul>
+            <li><strong>Питальний формат міняє якість ідей.</strong> BYU Design Review 2025: коли ставиш питання замість тверджень — команда генерує набагато ширший діапазон варіантів. Тобто з однієї сесії виходить більше корисного</li>
+            <li><strong>Ніхто не почувається що йому нав'язали.</strong> Якщо питання сформулювала вся команда разом — всі вже частково "за". Це магія методу</li>
+            <li><strong>Розкриває де у людей різне розуміння задачі.</strong> Розробник і SEO часто говорять про одне й те саме різними словами. HMW робить це видимим до того як всі розійшлись із зустрічі</li>
+            <li><strong>Добре працює асинхронно.</strong> Можна кинути питання в Slack до зустрічі — і прийти вже з матеріалом для обговорення</li>
+          </ul>
+        </div>
+        <div class="pm-power">
+          <div class="pm-icon">✦</div>
+          <div class="pm-text"><strong>Твій момент</strong>Ти задаєш формулювання проблеми на старті — і це задає напрям для всієї сесії. Якщо ти бачиш задачу ширше або інакше ніж інші, саме тут це проявляється найнатуральніше.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 CRAZY 8s -->
+<div class="card" data-type="diverge">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">02</div>
+    <div>
+      <div class="card-title">Crazy 8s ✦</div>
+      <div class="card-sub">8 варіантів рішення за 8 хвилин</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">20–30 хв</span>
+      <span class="meta-type">Генерація</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> Всі кивають або пропонують одне й те саме. Завжди після HMW. Нічого не малюємо — пишемо рішення текстом, логікою, кроками юзера від лендингу до кліку на Booking.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Як проходить</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p><strong>Підготовка (2 хв)</strong> — нагадуємо HMW-фокус. Кожен ділить аркуш або FigJam-фрейм на 8 частин.</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>8 хвилин мовчки</strong> — пишемо 8 різних варіантів рішення. Словами і логікою, не варіації одного — справді різні підходи.</p></div>
+            <div class="step"><div class="step-n">3</div><p><strong>2 хв презентація на людину</strong> — без захисту, тільки пояснення суті.</p></div>
+            <div class="step"><div class="step-n">4</div><p><strong>1 хв питань на людину</strong> — тільки "що ти маєш на увазі". Без дебатів.</p></div>
+            <div class="step"><div class="step-n">5</div><p><strong>Dot voting</strong> — 3 точки по всіх аркушах. Мовчки і одночасно.</p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Що отримує команда</h5>
+          <ul>
+            <li>Вихід за першу очевидну ідею — <strong>зона де починається реальна творчість</strong></li>
+            <li>Розробники самі кажуть <strong>що реалізується за день</strong></li>
+            <li>Ієрархія не працює — <strong>junior нарівні з senior</strong></li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Варіації одного рішення — <strong>просимо "а протилежність?"</strong></li>
+            <li>Хтось захищає свій варіант — <strong>зупиняємо</strong></li>
+            <li>Коментарі під час генерації — <strong>фаза одразу ламається</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>Перша ідея завжди найслабша.</strong> Google Ventures: перші 2–3 ідеї очевидні й передбачувані. 8 варіантів виводять у зону де починається реальна цінність</li>
+          <li><strong>Бачиш технічну реальність без груминг-сесій.</strong> Розробник сам напише що робиться за день — прямий виграш у часі на ітерацію</li>
+          <li><strong>Прозорий вибір.</strong> Коли всі бачили варіанти і проголосували — питань "чому саме це?" стає значно менше</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">♥</div>
+        <div class="pm-text"><strong>Твій момент</strong>Тут добре задавати питання — "що ти маєш на увазі під цим кроком?" звучить природно і без незручності. Ти побачиш як кожна роль бачить одну й ту саму задачу по-різному — і це саме по собі дуже цікаво.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- 03 DOT VOTING -->
+<div class="card" data-type="converge">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">03</div>
+    <div>
+      <div class="card-title">Dot Voting ♥</div>
+      <div class="card-sub">Пріоритизування без домінування голосних</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">5–10 хв</span>
+      <span class="meta-type">Рішення</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> Після генерації є купа варіантів і незрозуміло куди рухатись. Або треба пріоритизувати backlog без нескінченного обговорення.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Як проходить</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p>Всі варіанти видимі одночасно. Кожен отримує 3–5 точок.</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>Мовчки і одночасно</strong> — не чекаємо один одного. Можна всі точки поставити на одне.</p></div>
+            <div class="step"><div class="step-n">3</div><p>Підрахунок вголос. Рівний розподіл — ще один раунд або коротке обговорення.</p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Що отримує команда</h5>
+          <ul>
+            <li>Ownership — <strong>я голосував, це і моє рішення</strong></li>
+            <li>5 хвилин замість <strong>40-хвилинної дискусії</strong></li>
+            <li>Рівний розподіл = <strong>сигнал що потрібно більше даних</strong></li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Голосування після обговорення — <strong>всі слідують голоснішому</strong></li>
+            <li>Не підходить для <strong>чисто технічних рішень</strong></li>
+            <li>Результат — вхід для обговорення, <strong>не автоматичне рішення</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>Науково підтверджений метод.</strong> University of Washington (2022): мультиголосування на 50% точніше за звичайне — тобто команда частіше обирає правильний варіант</li>
+          <li><strong>Жодного тиску і впливу.</strong> Всі голосують мовчки і одночасно — можна щиро поставити точку туди куди справді хочеш, без оглядки на інших</li>
+          <li><strong>Рівний розподіл голосів — теж результат.</strong> Якщо думки розділились — це сигнал що треба ще поговорити. Не пат, а корисна інформація</li>
+          <li><strong>П'ять хвилин замість довгої дискусії.</strong> Особливо рятує коли є багато варіантів і незрозуміло з чого починати</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">✦</div>
+        <div class="pm-text"><strong>Твій момент</strong>Після голосування у тебе є конкретна картина — що команда вважає важливим. Це набагато сильніший аргумент ніж "мені здається". І всі відчувають що їхній голос врахували — а це безпосередньо впливає на залученість команди далі.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+
+
+<!-- 04 1-2-4-ALL -->
+<div class="card" data-type="sync">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">04</div>
+    <div>
+      <div class="card-title">1–2–4–All ♥</div>
+      <div class="card-sub">Структура що дає голос кожному</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">20–30 хв</span>
+      <span class="meta-type">Узгодження</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> На нараді завжди говорять одні й ті самі. Або тема чутлива і люди обережні. Ретро, планінги, будь-яке обговорення де важливо почути всіх.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Як проходить</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p><strong>1 — сам (2 хв)</strong> — кожен пише свою відповідь мовчки. Повними реченнями.</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>2 — пара (3 хв)</strong> — знайти спільне з сусідом. Одна теза від пари.</p></div>
+            <div class="step"><div class="step-n">3</div><p><strong>4 — четвірка (5 хв)</strong> — дві пари об'єднуються. Одна-дві тези.</p></div>
+            <div class="step"><div class="step-n">4</div><p><strong>All — коло</strong> — кожна четвірка ділиться. Фасилітатор фіксує на дошці.</p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Що отримує команда</h5>
+          <ul>
+            <li><strong>100% участь</strong> — ніхто не змовчить</li>
+            <li>Інтроверти <strong>приходять вже з позицією</strong></li>
+            <li>Природна <strong>фільтрація через рівні</strong></li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Без таймера — <strong>губиться ритм</strong></li>
+            <li>Питання розмите — <strong>пари не знайдуть спільне</strong></li>
+            <li>3–4 особи — <strong>надто формально</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>57% людей на нарадах відчувають що їх не чують</strong> — Flowtrace 2024–2025. Цей метод буквально вирішує це: кожен пише свою думку до того як хтось заговорив вголос</li>
+          <li><strong>Ти почуєш те що зазвичай залишається за кадром.</strong> Люди які мовчать на звичайних нарадах тут обов'язково беруть участь — і часто кажуть найточніше</li>
+          <li><strong>Природна фільтрація через рівні.</strong> До загального кола доходить тільки найсуттєвіше — і це вже підтримано парою і четвіркою</li>
+          <li><strong>Ідеально для ретро і планінгів</strong> — замість монологу одних і тих самих, виходить справжня картина від команди</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">♥</div>
+        <div class="pm-text"><strong>Твій момент</strong>Слухати і задавати питання — те що ти вже вмієш природно. Тут це стає структурою, і з неї виходять інсайти яких у іншому форматі просто не почуєш.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- 05 AFFINITY MAPPING -->
+<div class="card" data-type="converge sync">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">05</div>
+    <div>
+      <div class="card-title">Affinity Mapping ✦</div>
+      <div class="card-sub">Патерни і системні проблеми з хаосу думок</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">25–45 хв</span>
+      <span class="meta-type">Рішення</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> Після брейншторму або ретро є купа стікерів і незрозуміло що з ними робити. Або хочеться зрозуміти де реально болить у команди чи в продукті — без того щоб хтось один формулював за всіх.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Як проходить</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p><strong>Збір (10–15 хв)</strong> — всі пишуть спостереження, болі, ідеї. Один стікер — одна конкретна думка.</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>Мовчазне групування (10 хв)</strong> — переміщуємо схожі стікери поряд без пояснень.</p></div>
+            <div class="step"><div class="step-n">3</div><p><strong>Назви кластерів</strong> — разом вголос. Назва = суть проблеми, не перелік слів.</p></div>
+            <div class="step"><div class="step-n">4</div><p><strong>Dot voting → backlog</strong> з власниками і дедлайнами.</p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Що отримує команда</h5>
+          <ul>
+            <li>Одна скарга = думка. П'ять = <strong>системна проблема</strong></li>
+            <li>Мовчазне групування — <strong>без аргументів і захисту</strong></li>
+            <li>Спільне розуміння <strong>масштабу проблем</strong></li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Абстрактні стікери — <strong>нема що групувати</strong></li>
+            <li>Назви кластерів можуть стати <strong>полем для суперечок</strong></li>
+            <li>Асинхронно <strong>не працює</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>Одна скарга — думка. П'ять — системна проблема.</strong> Метод перетворює суб'єктивне на об'єктивне, і захищає від рішень на основі того хто голосніше говорить</li>
+          <li><strong>Мовчазне групування — без аргументів і захисту.</strong> Всі переміщують стікери одночасно, ніхто нікого не переконує. Виходить чесна структура того що реально важливо</li>
+          <li><strong>PMC 2017: різноманітні групи точніше знаходять системні проблеми.</strong> Коли кожна роль дивиться на ті самі дані — виходить набагато повніша картина</li>
+          <li><strong>Backlog отримує пріоритети від команди.</strong> Коли люди самі назвали щось важливим — з цим легше погоджуватись і важче відкладати</li> Одна скарга — це думка. Та сама у п'ятьох — системна проблема. Захищає від рішень на основі найгучнішого голосу</li>
+          <li><strong>Backlog отримує реальні пріоритети від команди.</strong> Важче відкласти те що самі ж назвали важливим</li>
+          <li><strong>Дизайн і продакт говорять про одні кластери</strong> — пряме скорочення "а ми взагалі про одне говоримо?"</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">✦</div>
+        <div class="pm-text"><strong>Твій момент</strong>Після сесії у тебе є конкретні кластери з голосами — не твоя думка, а зібрані дані від усіх. Це сильний аргумент для будь-якого обговорення пріоритетів.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- 06 WORST POSSIBLE IDEA -->
+<div class="card" data-type="diverge">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">06</div>
+    <div>
+      <div class="card-title">Worst Possible Idea ♥</div>
+      <div class="card-sub">Зламати блок через абсурд і інверсію</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">15–20 хв</span>
+      <span class="meta-type">Генерація</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> Усі обережні або пропонують тільки безпечні варіанти. Добре як розігрів перед важкою темою. Ще підходить якщо після Crazy 8s виявилось що у всіх насправді була одна й та сама ідея.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Як проходить</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p><strong>Фрейм (2 хв)</strong> — "Як зробити сторінку готелю такою, щоб людина точно не натиснула на Booking і пішла назад до Google?"</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>5 хв</strong> — пишемо найжахливіші рішення. Чим абсурдніше — тим краще.</p></div>
+            <div class="step"><div class="step-n">3</div><p><strong>Зачитування</strong> — сміх допускається і вітається.</p></div>
+            <div class="step"><div class="step-n">4</div><p><strong>Інверсія (5 хв)</strong> — "А пряма протилежність?" Це і є результат.</p></div>
+            <div class="step"><div class="step-n">5</div><p><strong>Dot voting по інверсіях.</strong></p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Що отримує команда</h5>
+          <ul>
+            <li>Страх помилки <strong>знімається структурно</strong></li>
+            <li>Рівномірна участь — <strong>ієрархія рівняється</strong></li>
+            <li>Інверсії = <strong>несподівані реальні рішення</strong></li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Застрягли в жартах — <strong>суворо переводимо в інверсію</strong></li>
+            <li>Коментарі під час генерації — <strong>фаза не спрацює</strong></li>
+            <li>Інверсія надто загальна — <strong>потрібна конкретика</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>Google Project Aristotle: психологічна безпека — №1 фактор ефективності команди.</strong> Цей метод створює її структурно — помилятись тут не просто дозволено, це завдання</li>
+          <li><strong>Найсміливіші ідеї виходять через абсурд.</strong> Коли задача написати щось жахливе — внутрішній критик вимикається. А в інверсіях часто ховаються рішення яких ніхто б не запропонував напряму</li>
+          <li><strong>Сміх рівняє ієрархію краще за будь-який тімбілдінг.</strong> Після спільного сміху над абсурдними ідеями обговорювати серйозні речі стає набагато легше</li>
+          <li><strong>Відмінний розігрів перед важкою темою</strong> — 15 хвилин повністю змінюють атмосферу в кімнаті</li> Google Project Aristotle. Worst Possible Idea знімає тиск структурно — помилятись це завдання, а не ризик</li>
+          <li><strong>Команда розкривається рівномірно.</strong> Сміх рівняє ієрархію краще ніж "тут немає поганих ідей"</li>
+          <li><strong>Інверсії часто дають найцінніші рішення.</strong> Те що прийшло через абсурд — звичайним шляхом не прийшло б</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">♥</div>
+        <div class="pm-text"><strong>Твій момент</strong>Бери участь від душі — пиши найбезглуздіші маркетингові ідеї. По-перше, це весело. По-друге, інверсії бізнес-абсурду часто дають найцінніші напрямки яких інші ролі просто не побачать.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- 07 DESIGN SPRINT LIGHT -->
+<div class="card" data-type="diverge converge sync">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">07</div>
+    <div>
+      <div class="card-title">Design Sprint Light ✦</div>
+      <div class="card-sub">Повний цикл від проблеми до рішення за 2 години</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">90–120 хв</span>
+      <span class="meta-type">Повний цикл</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> Є задача яка потребує рішення від кількох ролей одночасно. Раз на місяць по чомусь конкретному — наприклад CTR на клікаут до Booking падає і незрозуміло чому.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Структура</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p><strong>Define (20 хв)</strong> — ти задаєш метрику успіху і обмеження. Це anchor — не змінюється.</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>HMW (15 хв)</strong> — питання, dot voting, фокус.</p></div>
+            <div class="step"><div class="step-n">3</div><p><strong>Crazy 8s (20 хв)</strong> — 8 варіантів, голосування.</p></div>
+            <div class="step"><div class="step-n">4</div><p><strong>Solution Brief (25 хв)</strong> — текст: логіка, кроки, що потрібно від кожної ролі. Без UI.</p></div>
+            <div class="step"><div class="step-n">5</div><p><strong>Decide (15 хв) + Next Steps (10 хв)</strong> — ім'я + дія + дедлайн для кожного.</p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Що отримує команда</h5>
+          <ul>
+            <li><strong>Конкретне рішення</strong> з документованою логікою</li>
+            <li>замінює кілька нарад де всі розходяться без конкретики</li>
+            <li>Всі ролі <strong>рівноцінні</strong></li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Розмита проблема — <strong>2 години даремно</strong></li>
+            <li>Solution Brief стає UI — <strong>тільки логіка і кроки</strong></li>
+            <li>Без Next Steps з іменами — <strong>рішення залишається на дошці</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>64% регулярних нарад не мають структурованого порядку</strong> — Flowtrace 2024–2025. Sprint Light повністю протилежний: таймери, конкретний артефакт на виході і next steps з іменами</li>
+          <li><strong>Всі ролі будують рішення разом від початку.</strong> Зникає ситуація коли хтось приносить готове а решта лише реагує. Всі в процесі з першої хвилини</li>
+          <li><strong>Solution Brief фіксує логіку рішення.</strong> Не тільки "що вирішили", але й "чому саме так" — дуже зручно коли треба пояснити рішення будь-кому пізніше</li>
+          <li><strong>замінює кілька нарад де всі розходяться без конкретики</strong> — два години з виходом набагато ефективніші ніж п'ять зустрічей без нього</li> Flowtrace 2024–2025. Sprint Light — протилежність: таймери, артефакт на виході, конкретні next steps</li>
+          <li><strong>PM і дизайн будують рішення разом від початку</strong> — зникає класичний конфлікт "дизайн приносить макет, продакт має зауваження"</li>
+          <li><strong>Письмова логіка рішення.</strong> Solution Brief фіксує чому саме так. Через місяць зрозуміло контекст — менше "навіщо ми це взагалі зробили?"</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">✦</div>
+        <div class="pm-text"><strong>Твій момент</strong>На Define ти задаєш контекст і метрику — і це реально важливий внесок. Далі ти рівний учасник, і на виході у тебе є Solution Brief з рішенням яке підтримала вся команда.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- 08 AUDIT -->
+<div class="card" data-type="audit">
+  <div class="card-hd" onclick="toggle(this)" tabindex="0" onkeydown="if(event.key==='Enter')toggle(this)">
+    <div class="card-num">08</div>
+    <div>
+      <div class="card-title">Спільний продуктовий аудит ♥</div>
+      <div class="card-sub">Вся команда проходить продукт як юзер</div>
+    </div>
+    <div class="card-meta">
+      <span class="meta-time">60–90 хв</span>
+      <span class="meta-type">Аудит</span>
+      <div class="toggle">+</div>
+    </div>
+  </div>
+  <div class="card-bd-wrap">
+    <div class="card-bd-inner"><div class="card-bd">
+      <div class="when-note"><strong>Коли:</strong> Раз на квартал. Розробник бачить технічне, SEO де не вистачає контенту, ти де ми не виконуємо обіцянку з оголошення, дизайн де юзер губиться до кліку. Разом закривається повна картина.</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="box grid2-full">
+          <h5 class="rose">Як проходить</h5>
+          <div class="steps">
+            <div class="step"><div class="step-n">1</div><p><strong>Сценарій (5 хв)</strong> — "Ти зайшов з пошуку, шукаєш готель у Римі. Нічого про нас не знаєш." Всі в ролі юзера.</p></div>
+            <div class="step"><div class="step-n">2</div><p><strong>Мовчазний прохід (15–20 хв)</strong> — стікери: що здивувало, де зупинився, що викликало довіру або недовіру.</p></div>
+            <div class="step"><div class="step-n">3</div><p><strong>Зачитування → Affinity mapping → Dot voting</strong></p></div>
+            <div class="step"><div class="step-n">4</div><p><strong>Топ-3 → backlog з власниками</strong> до кінця сесії.</p></div>
+          </div>
+        </div>
+        <div class="box">
+          <h5 class="teal">Лінза кожної ролі</h5>
+          <ul>
+            <li><strong>PM:</strong> де обіцяли одне, показуємо інше</li>
+            <li><strong>Дизайн:</strong> де губиться шлях до кліку</li>
+            <li><strong>Розробка:</strong> технічні збої і гальма</li>
+            <li><strong>SEO:</strong> контентні прогалини</li>
+          </ul>
+        </div>
+        <div class="box" style="background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);">
+          <h5 class="red">На що звернути увагу</h5>
+          <ul>
+            <li>Без сценарію — <strong>кожен дивиться різне</strong></li>
+            <li>Фіксують баги замість UX — <strong>нагадуємо лінзу юзера</strong></li>
+            <li>Без follow-up — <strong>витрачений час</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="benefit-block">
+        <div class="benefit-title">♥ Чому тобі це зайде</div>
+        <ul>
+          <li><strong>Ти бачиш продукт очима юзера.</strong> Не зі своєї ролі, а з точки людини яка зайшла з Google і нічого про нас не знає — це дає зовсім інший кут зору</li>
+          <li><strong>PMC 2017: різні ролі разом бачать більше.</strong> Кожен фіксує своє — і разом виходить картина яку одна людина ніколи б не склала</li>
+          <li><strong>Де обіцяли одне, показуємо інше — стає очевидним.</strong> Це тип інсайту який дуже важко помітити зсередини, і дуже легко — коли проходиш продукт як новий юзер</li>
+          <li><strong>Спільний backlog від усієї команди</strong> — не чийсь особистий список, а те що знайшли разом. З таким списком набагато простіше домовлятись про пріоритети</li> PMC 2017: різноманітні групи точніше знаходять системні проблеми. Розробник, SEO і дизайн разом бачать те що кожен окремо просто не помічає</li>
+          <li><strong>Бачиш розрив між тим що обіцяли і тим що є</strong> — без окремих досліджень і репортів. Одна сесія = повна картина</li>
+          <li><strong>Спільний backlog від команди</strong> — не твій список і не список дизайнера. Один від усіх, і всі відповідальні за нього</li>
+        </ul>
+      </div>
+      <div class="pm-power">
+        <div class="pm-icon">♥</div>
+        <div class="pm-text"><strong>Твій момент</strong>Ти єдина в команді хто природно бачить де продукт не збігається з тим що ми обіцяємо в рекламі. Це конкретний і цінний кут — просто фіксуй що помічаєш.</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+</div><!-- /cards -->
+
+<div class="empty-state" id="emptyState">Нічого не знайдено за цим фільтром</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-left">З любов'ю і доказовою базою ♥</div>
+  <div class="footer-right">8 практик · від твоєї бесті</div>
+</div>
+
+<script>
+// TOGGLE
+function toggle(hd) {
+  const card = hd.closest('.card');
+  const wasOpen = card.classList.contains('open');
+  card.classList.toggle('open');
+  // sparkle on open
+  if (!wasOpen) spawnSparkles(hd);
+}
+
+// FILTER
+function filter(btn) {
+  const type = btn.dataset.filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  let visible = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const types = card.dataset.type || '';
+    const show = type === 'all' || types.includes(type);
+    card.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  document.getElementById('count').textContent = visible + (visible === 1 ? ' практика' : visible < 5 ? ' практики' : ' практик');
+  document.getElementById('emptyState').classList.toggle('visible', visible === 0);
+}
+
+// BENEFIT BLOCK FLOATERS
+(function() {
+  const chars = ['✦','♥','✦','♥','✦','♥'];
+  const positions = [
+    { right: '8%',  bottom: '10%', dur: '3.8s', delay: '0s',    rot0: '-5deg',  rot1: '10deg',  rot2: '-8deg'  },
+    { right: '18%', bottom: '5%',  dur: '5.2s', delay: '0.7s',  rot0: '8deg',   rot1: '-12deg', rot2: '6deg'   },
+    { right: '30%', bottom: '12%', dur: '4.4s', delay: '1.4s',  rot0: '-10deg', rot1: '8deg',   rot2: '-15deg' },
+    { right: '45%', bottom: '4%',  dur: '6.1s', delay: '0.3s',  rot0: '5deg',   rot1: '-6deg',  rot2: '12deg'  },
+    { right: '60%', bottom: '8%',  dur: '4.9s', delay: '1.1s',  rot0: '-8deg',  rot1: '14deg',  rot2: '-5deg'  },
+    { right: '75%', bottom: '6%',  dur: '3.6s', delay: '0.9s',  rot0: '12deg',  rot1: '-8deg',  rot2: '10deg'  },
+  ];
+
+  document.querySelectorAll('.benefit-block').forEach(block => {
+    const wrap = document.createElement('div');
+    wrap.className = 'floaters';
+    chars.forEach((ch, i) => {
+      const p = positions[i];
+      const el = document.createElement('span');
+      el.className = 'floater';
+      el.textContent = ch;
+      el.style.cssText = `right:${p.right};bottom:${p.bottom};--dur:${p.dur};--delay:${p.delay};--rot0:${p.rot0};--rot1:${p.rot1};--rot2:${p.rot2};font-size:${i % 2 === 0 ? '10px' : '8px'}`;
+      wrap.appendChild(el);
+    });
+    block.insertBefore(wrap, block.firstChild);
+  });
+})();
+
+// SPARKLE CURSOR
+function spawnSparkles(el) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const chars = ['✦','♥','✦','♥','✦'];
+  chars.forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'sparkle-pop';
+    span.textContent = ch;
+    const angle = (i / chars.length) * Math.PI * 2;
+    const r = 24 + Math.random() * 20;
+    span.style.cssText = `
+      left:${cx + Math.cos(angle) * r}px;
+      top:${cy + Math.sin(angle) * r}px;
+      color:${['#7C3AED','#F5C400','#0891B2','#059669','#7C3AED','#F5C400'][i]||'#7C3AED'};
+      animation-delay:${i * 0.05}s;
+    `;
+    document.body.appendChild(span);
+    setTimeout(() => span.remove(), 800);
+  });
+}
+</script>
+</body>
+</html>
