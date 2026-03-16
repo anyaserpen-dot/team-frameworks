@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favicon Generator v2</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0c0c0e;
+    --surface: #141416;
+    --surface2: #1c1c1f;
+    --border: #272729;
+    --accent: #4f8eff;
+    --accent2: #ff6b4a;
+    --text: #e4e4e8;
+    --muted: #5a5a64;
+    --success: #3ddc84;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+
+  header { padding: 20px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 20px; }
+  header h1 { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+  .badge { background: var(--accent); color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 3px; }
+  .version { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  .layout { display: grid; grid-template-columns: 300px 1fr; flex: 1; min-height: 0; }
+
+  .sidebar { border-right: 1px solid var(--border); padding: 24px 20px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+
+  .field-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+
+  textarea {
+    width: 100%; height: 240px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; line-height: 1.8; padding: 12px; resize: vertical; outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); }
+
+  .counter { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); text-align: right; margin-top: 5px; }
+
+  /* Options grid */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .opt-card {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+    padding: 10px 12px; cursor: pointer; transition: border-color 0.15s;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .opt-card:hover { border-color: #3a3a44; }
+  .opt-card.active { border-color: var(--accent); background: rgba(79,142,255,0.06); }
+  .opt-card .opt-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .opt-card .opt-value { font-size: 12px; color: var(--text); font-weight: 500; }
+
+  .toggle-row { display: flex; gap: 6px; }
+  .toggle-btn {
+    flex: 1; padding: 8px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 5px; color: var(--muted); font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .btn-primary {
+    background: var(--accent); color: #fff; border: none; border-radius: 7px;
+    padding: 13px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.02em;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-dl {
+    background: transparent; color: var(--success); border: 1px solid var(--success);
+    border-radius: 7px; padding: 12px; font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+    display: none; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-dl:hover { background: rgba(61,220,132,0.07); }
+  .btn-dl.show { display: flex; }
+
+  /* Main */
+  .main { display: flex; flex-direction: column; overflow: hidden; }
+  .toolbar { padding: 14px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .size-btns { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px; gap: 2px; }
+  .sz-btn { border: none; background: transparent; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 9px; border-radius: 3px; cursor: pointer; }
+  .sz-btn.active { background: var(--accent); color: #fff; }
+  .status-txt { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); }
+  .stat-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  .progress { height: 2px; background: var(--border); display: none; }
+  .progress.show { display: block; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.08s; }
+
+  .grid-wrap { flex: 1; overflow-y: auto; padding: 24px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .grid.lg { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .grid.sm { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
+
+  .fav-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 10px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: border-color 0.12s;
+  }
+  .fav-card:hover { border-color: #333338; }
+  .fav-domain { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); text-align: center; word-break: break-all; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 10px; color: var(--muted); text-align: center; }
+  .empty p { font-size: 12px; max-width: 220px; line-height: 1.6; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Favicon Generator</h1>
+  <span class="badge">v2</span>
+  <span class="version">shape · color · letter/icon · unique per domain</span>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+
+    <div>
+      <div class="field-label">Список доменів</div>
+      <textarea id="domains" placeholder="best-hotels.com&#10;vienna-hotels.info&#10;paris-booking.org&#10;..."></textarea>
+      <div class="counter" id="counter">0 доменів</div>
+    </div>
+
+    <div>
+      <div class="field-label">Контент фавікону</div>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="t-auto" onclick="setContent('auto')">авто (mix)</button>
+        <button class="toggle-btn" id="t-letter" onclick="setContent('letter')">тільки літери</button>
+        <button class="toggle-btn" id="t-icon" onclick="setContent('icon')">тільки іконки</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="field-label">Форма</div>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="s-auto" onclick="setShape('auto')">авто</button>
+        <button class="toggle-btn" id="s-round" onclick="setShape('round')">●</button>
+        <button class="toggle-btn" id="s-soft" onclick="setShape('soft')">▣</button>
+        <button class="toggle-btn" id="s-square" onclick="setShape('square')">■</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="field-label">Градієнт</div>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="g-auto" onclick="setGrad('auto')">авто</button>
+        <button class="toggle-btn" id="g-flat" onclick="setGrad('flat')">моно</button>
+        <button class="toggle-btn" id="g-dual" onclick="setGrad('dual')">2 кольори</button>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btn-gen" onclick="generate()">Згенерувати</button>
+    <button class="btn-dl" id="btn-dl" onclick="downloadZip()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      Скачати ZIP
+    </button>
+
+  </div>
+
+  <div class="main">
+    <div class="progress" id="progress"><div class="progress-fill" id="pfill"></div></div>
+    <div class="toolbar">
+      <div class="size-btns">
+        <button class="sz-btn" onclick="setSize('sm',this)">S</button>
+        <button class="sz-btn active" onclick="setSize('md',this)">M</button>
+        <button class="sz-btn" onclick="setSize('lg',this)">L</button>
+      </div>
+      <span class="status-txt" id="stxt"></span>
+      <span class="stat-count" id="scnt"></span>
+    </div>
+    <div class="grid-wrap">
+      <div class="grid" id="grid">
+        <div class="empty" style="grid-column:1/-1;height:60vh">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style="opacity:.15"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          <p>Вставте домени і натисніть «Згенерувати»</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+
+// 12 travel icons (Material Design paths, 24px viewBox)
+const ICONS = [
+  // plane
+  "M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z",
+  // home/hotel
+  "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+  // globe
+  "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z",
+  // pin
+  "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+  // sun
+  "M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z",
+  // luggage/bag
+  "M20 6h-2.18c.07-.44.18-.88.18-1 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .12.11.56.18 1H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-3c1.1 0 2 .9 2 2 0 .12-.11.56-.18 1h-3.64C12.11 5.56 12 5.12 12 5c0-1.1.9-2 2-2zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z",
+  // compass
+  "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7-3 3-7-7 3-3 7zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z",
+  // beach/umbrella  
+  "M13.13 2.16C12.77 2.06 12.39 2 12 2 9.62 2 7.5 3.37 6.47 5.43L13.13 2.16zM7.5 8.5C7.5 5.74 9.74 3.5 12.5 3.5c.44 0 .87.06 1.28.16L7.5 8.5zm5.5 9.5v-3.46l5.88-5.88C17.59 7.04 15.17 6 12.5 6 8.36 6 5 9.36 5 13.5c0 2.67 1.04 5.09 2.62 6.88L13 13.5v4.5h-1v2h2v-2h-1z",
+  // ski
+  "M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z",
+  // star
+  "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
+  // waves/beach
+  "M17 16.99c-1.35 0-2.2.42-2.95.8-.65.33-1.18.6-2.05.6-.9 0-1.4-.25-2.05-.6-.75-.38-1.57-.8-2.95-.8s-2.2.42-2.95.8c-.65.33-1.17.6-2.05.6v1.95c1.35 0 2.2-.42 2.95-.8.65-.33 1.17-.6 2.05-.6s1.4.25 2.05.6c.75.38 1.57.8 2.95.8s2.2-.42 2.95-.8c.65-.33 1.18-.6 2.05-.6.9 0 1.4.25 2.05.6.75.38 1.57.8 2.95.8v-1.95c-.9 0-1.4-.25-2.05-.6-.75-.38-1.6-.8-2.95-.8zm0-4.5c-1.35 0-2.2.43-2.95.8-.65.32-1.18.6-2.05.6-.9 0-1.4-.25-2.05-.6-.75-.38-1.57-.8-2.95-.8s-2.2.43-2.95.8c-.65.33-1.17.6-2.05.6v1.95c1.35 0 2.2-.43 2.95-.8.65-.33 1.17-.6 2.05-.6s1.4.25 2.05.6c.75.38 1.57.8 2.95.8s2.2-.43 2.95-.8c.65-.33 1.18-.6 2.05-.6.9 0 1.4.25 2.05.6.75.38 1.57.8 2.95.8V13.8c-.9 0-1.4-.25-2.05-.6-.75-.38-1.6-.8-2.95-.8zM18.97 5C17.15 3.07 14.69 2 12 2S6.85 3.07 5.03 5H18.97zm-7.16 5.22c-.41.19-.81.4-1.42.4-.9 0-1.4-.25-2.05-.6-.31-.16-.64-.31-1.02-.44C8.17 8.44 9.98 7.5 12 7.5c2.03 0 3.84.94 5.67 2.08-.37.13-.7.28-1.01.43-.65.35-1.15.6-2.05.6-.59 0-.99-.2-1.8-.39z",
+  // mountain/ski resort
+  "M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z",
+];
+
+// 6 shape renderers
+const SHAPES = [
+  // rounded soft (rx=7)
+  (sz, fill) => `<rect width="${sz}" height="${sz}" rx="7" fill="${fill}"/>`,
+  // circle
+  (sz, fill) => `<circle cx="${sz/2}" cy="${sz/2}" r="${sz/2}" fill="${fill}"/>`,
+  // squircle-ish (rx=12 for 32px)
+  (sz, fill) => `<rect width="${sz}" height="${sz}" rx="${Math.round(sz*0.37)}" fill="${fill}"/>`,
+  // square sharp
+  (sz, fill) => `<rect width="${sz}" height="${sz}" rx="2" fill="${fill}"/>`,
+  // rounded medium
+  (sz, fill) => `<rect width="${sz}" height="${sz}" rx="${Math.round(sz*0.22)}" fill="${fill}"/>`,
+  // stadium (top half round)
+  (sz, fill) => `<rect width="${sz}" height="${sz}" rx="${Math.round(sz*0.28)}" fill="${fill}"/>`,
+];
+
+// 16 distinct hue zones spread across spectrum
+const HUE_ZONES = [0,22,40,60,80,100,135,160,185,205,225,250,270,295,320,345];
+
+// gradient directions
+const GRAD_DIRS = [
+  ['0%,0%','100%,100%'], // diagonal
+  ['0%,0%','100%,0%'],   // horizontal
+  ['0%,0%','0%,100%'],   // vertical
+  ['100%,0%','0%,100%'], // diagonal reverse
+];
+
+// State
+let contentMode = 'auto';
+let shapeMode = 'auto';
+let gradMode = 'auto';
+let gridSize = 'md';
+let generatedSVGs = {};
+
+// ── UI handlers ───────────────────────────────────────────────────────────────
+document.getElementById('domains').addEventListener('input', function() {
+  const d = parseDomains(this.value);
+  document.getElementById('counter').textContent = d.length + ' доменів';
+});
+
+function setContent(m) { contentMode = m; ['auto','letter','icon'].forEach(x => document.getElementById('t-'+x)?.classList.toggle('active', x===m)); }
+function setShape(m)   { shapeMode = m;   ['auto','round','soft','square'].forEach(x => document.getElementById('s-'+x)?.classList.toggle('active', x===m)); }
+function setGrad(m)    { gradMode = m;    ['auto','flat','dual'].forEach(x => document.getElementById('g-'+x)?.classList.toggle('active', x===m)); }
+function setSize(s,btn){ gridSize=s; document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); if(Object.keys(generatedSVGs).length) generate(); }
+
+function parseDomains(t) { return t.split('\n').map(d=>d.trim()).filter(d=>d&&!d.startsWith('#')); }
+
+function domainLetter(domain) {
+  const name = domain.toLowerCase().replace(/^www\./,'').split('.')[0];
+  // strip common prefixes for better letters
+  const clean = name.replace(/^(bed|and|breakfast|hotel|hotels|luxury|boutique|resort|resorts|vacation|travel|guide)/,'') || name;
+  return (clean[0] || name[0] || 'H').toUpperCase();
+}
+
+// ── Hash & generation ────────────────────────────────────────────────────────
+async function hashDomain(domain) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(domain.toLowerCase().trim()));
+  return new Uint8Array(buf);
+}
+
+function makeFavicon(domain, h) {
+  const sz = 32;
+
+  // 1. Color — pick hue zone then fine-tune
+  const hueZone = HUE_ZONES[h[0] % HUE_ZONES.length];
+  const hue = (hueZone + (h[1] % 22) - 11 + 360) % 360;
+  const sat = 50 + (h[2] % 30);     // 50–79%
+  const lit = 30 + (h[3] % 22);     // 30–51%
+  const lit2 = Math.min(lit + 18 + (h[7] % 12), 72);
+
+  const col1 = `hsl(${hue},${sat}%,${lit}%)`;
+  // dual: sometimes complementary hue, sometimes analogous
+  const hue2 = (h[8] % 3 === 0)
+    ? (hue + 180 + (h[9]%30) - 15) % 360  // complementary
+    : (hue + 30 + (h[9]%30)) % 360;         // analogous
+  const col2 = `hsl(${hue2},${sat-5}%,${lit2}%)`;
+
+  // 2. Gradient
+  const useFlat = gradMode === 'flat' || (gradMode === 'auto' && h[6] % 4 === 0);
+  const useDual = gradMode === 'dual' || (gradMode === 'auto' && !useFlat);
+  const gradDir = GRAD_DIRS[h[10] % GRAD_DIRS.length];
+  const [x1y1, x2y2] = gradDir;
+  const [x1,y1] = x1y1.split(',');
+  const [x2,y2] = x2y2.split(',');
+
+  let fill;
+  if (useFlat) {
+    fill = col1;
+  } else {
+    fill = `url(#g${h[0]})`;
+  }
+
+  // 3. Shape
+  let shapeIdx;
+  if (shapeMode === 'auto') shapeIdx = h[4] % SHAPES.length;
+  else if (shapeMode === 'round') shapeIdx = 1;
+  else if (shapeMode === 'soft') shapeIdx = 2;
+  else shapeIdx = 3;
+  const shapeEl = SHAPES[shapeIdx](sz, fill);
+
+  // 4. Content — letter or icon
+  let useIcon;
+  if (contentMode === 'letter') useIcon = false;
+  else if (contentMode === 'icon') useIcon = true;
+  else useIcon = h[5] % 2 === 0; // 50/50
+
+  let contentEl;
+  if (useIcon) {
+    const iconPath = ICONS[h[5] % ICONS.length];
+    // light icon on dark bg, or dark on light
+    const iconColor = lit < 45 ? 'rgba(255,255,255,0.93)' : 'rgba(0,0,0,0.75)';
+    contentEl = `<g transform="translate(4,4) scale(1)"><svg width="24" height="24" viewBox="0 0 24 24"><path d="${iconPath}" fill="${iconColor}"/></svg></g>`;
+  } else {
+    const letter = domainLetter(domain);
+    const fontSz = 14 + (h[11] % 3); // 14–16px
+    const fontW = h[12] % 2 === 0 ? '700' : '600';
+    const textColor = lit < 45 ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.8)';
+    // slight rotation for variety
+    const rot = (h[13] % 3) - 1; // -1, 0 or 1 deg
+    contentEl = `<text x="16" y="${18 + (h[14] % 2)}" text-anchor="middle" dominant-baseline="auto"
+      font-family="system-ui,sans-serif" font-size="${fontSz}" font-weight="${fontW}"
+      fill="${textColor}" transform="rotate(${rot},16,16)">${letter}</text>`;
+  }
+
+  // Assemble SVG
+  const gradDef = (!useFlat) ? `<defs><linearGradient id="g${h[0]}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"><stop offset="0%" stop-color="${col1}"/><stop offset="100%" stop-color="${col2}"/></linearGradient></defs>` : '';
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}">${gradDef}${shapeEl}${contentEl}</svg>`;
+}
+
+// ── Generate ────────────────────────────────────────────────────────────────
+async function generate() {
+  const domains = parseDomains(document.getElementById('domains').value);
+  if (!domains.length) return;
+
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = true; btn.textContent = 'Генерую...';
+
+  const prog = document.getElementById('progress');
+  const pfill = document.getElementById('pfill');
+  prog.classList.add('show');
+  generatedSVGs = {};
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  grid.className = 'grid' + (gridSize==='lg'?' lg':gridSize==='sm'?' sm':'');
+
+  const pvSz = gridSize==='lg'?48:gridSize==='sm'?20:32;
+
+  for (let i = 0; i < domains.length; i++) {
+    const domain = domains[i];
+    const h = await hashDomain(domain);
+    const svg = makeFavicon(domain, h);
+    generatedSVGs[domain] = svg;
+
+    const card = document.createElement('div');
+    card.className = 'fav-card';
+
+    const preview = document.createElement('div');
+    preview.style.cssText = `width:${pvSz}px;height:${pvSz}px;flex-shrink:0`;
+    preview.innerHTML = svg.replace(`width="32" height="32"`, `width="${pvSz}" height="${pvSz}"`);
+
+    const name = document.createElement('div');
+    name.className = 'fav-domain';
+    name.title = domain;
+    name.textContent = domain;
+
+    card.append(preview, name);
+    grid.appendChild(card);
+
+    pfill.style.width = ((i+1)/domains.length*100)+'%';
+    document.getElementById('stxt').textContent = `${i+1} / ${domains.length}`;
+
+    if (i % 60 === 0) await new Promise(r=>setTimeout(r,0));
+  }
+
+  document.getElementById('scnt').textContent = domains.length + ' фавіконів';
+  document.getElementById('stxt').textContent = '';
+  prog.classList.remove('show');
+  pfill.style.width = '0';
+  btn.disabled = false; btn.textContent = 'Згенерувати';
+  document.getElementById('btn-dl').classList.add('show');
+}
+
+// ── Download ZIP ─────────────────────────────────────────────────────────────
+async function downloadZip() {
+  const btn = document.getElementById('btn-dl');
+  btn.textContent = 'Пакую...'; btn.style.pointerEvents = 'none';
+
+  const zip = new JSZip();
+  const entries = Object.entries(generatedSVGs);
+
+  for (let i = 0; i < entries.length; i++) {
+    const [domain, svg] = entries[i];
+    const f = zip.folder(domain);
+    f.file('favicon.svg', svg);
+    f.file('markup.html',
+`<!-- ${domain} -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">`
+    );
+    if (i % 100 === 0) await new Promise(r=>setTimeout(r,0));
+  }
+
+  const blob = await zip.generateAsync({type:'blob',compression:'DEFLATE'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `favicons-${entries.length}.zip`;
+  a.click();
+
+  btn.textContent = '✓ Готово';
+  setTimeout(()=>{ btn.textContent='Скачати ZIP'; btn.style.pointerEvents=''; }, 2000);
+}
+</script>
+</body>
+</html>
