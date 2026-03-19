@@ -4372,7 +4372,37 @@ function luminance(hex) {
   const l=c=>c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);
   return .2126*l(r)+.7152*l(g)+.0722*l(b);
 }
-function iconColor(c1) { return luminance(c1)>.35?'rgba(20,14,10,0.88)':'rgba(255,255,255,0.95)'; }
+// Candidate icon colors: light tints (work on dark/mid backgrounds) + darks (work on bright)
+const ICON_COLORS = [
+  '#FFFFFF',   // pure white
+  '#FFF0E0',   // warm cream
+  '#E0EFFF',   // ice blue
+  '#E0FFE8',   // soft mint
+  '#FFE0EE',   // blush
+  '#EDE0FF',   // lavender
+  '#FFFDE0',   // cream yellow
+  '#E0FFFC',   // aqua
+  '#1A0F08',   // near-black warm (for bright backgrounds)
+  '#080F1A',   // near-black cool (for bright backgrounds)
+];
+
+function contrastRatio(hex1, hex2) {
+  const l1 = luminance(hex1), l2 = luminance(hex2);
+  const hi = Math.max(l1,l2), lo = Math.min(l1,l2);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+// seed = 0-255 deterministic byte per domain → picks from WCAG-passing candidates
+function iconColor(bgHex, seed) {
+  const candidates = ICON_COLORS.filter(c => contrastRatio(c, bgHex) >= 3.0);
+  // fallback: relax to 2.5 (graphical element allowance) if nothing passes
+  const pool = candidates.length ? candidates : ICON_COLORS.filter(c => contrastRatio(c, bgHex) >= 2.5);
+  const chosen = pool.length ? pool[seed % pool.length] : '#FFFFFF';
+  // convert hex → rgba with opacity for consistency with rendering
+  const r=parseInt(chosen.slice(1,3),16), g=parseInt(chosen.slice(3,5),16), b=parseInt(chosen.slice(5,7),16);
+  const isDark = luminance(chosen) < 0.4;
+  return `rgba(${r},${g},${b},${isDark ? '0.88' : '0.95'})`;
+}
 
 function normalizeDomain(domain) {
   let s = domain.toLowerCase();
@@ -4595,7 +4625,7 @@ function tick(ms=0){ return new Promise(r=>setTimeout(r,ms)); }
 function buildPreviewSVG(entry, gId) {
   const pal=PALETTES[entry.palette];
   const [c1,c2]=pal[entry.palette_idx % pal.length];
-  const ic=iconColor(c1);
+  const ic=iconColor(c1, entry.iconColorSeed||0);
   const gName=`G${gId}`;
   const gradDef=buildGradDef(gName, entry.gradient, c1, c2);
   const content=buildContent(entry, gId, ic, true);
@@ -4610,7 +4640,7 @@ function buildPreviewSVG(entry, gId) {
 function buildManifestSVG(entry) {
   const pal=PALETTES[entry.palette];
   const [c1,c2]=pal[entry.palette_idx % pal.length];
-  const ic=iconColor(c1);
+  const ic=iconColor(c1, entry.iconColorSeed||0);
   const gradDef=buildGradDef('G', entry.gradient, c1, c2);
   const content=buildContent(entry, 'm', ic, false);
   const symM=entry.iconKey?resolveIcon(entry.iconKey,entry.category):null;
@@ -4705,18 +4735,20 @@ async function computeEntry(domain, abbr, offset) {
 
   // No keyword matched → text mode (Abbr), no icon
   if(!ce){
-    return {
+    const iconColorSeed = (h[4]^h[10]^h[16]+offset)&0xFF;
+  return {
       abbr, category:'text', iconKey:null, useText:true,
-      palette, palette_idx, shape, gradient,
+      palette, palette_idx, shape, gradient, iconColorSeed,
       combo_key:`${palette}-${shape}-${gradient}-text`,
     };
   }
 
   const iconIdx = (h[5]^h[11]^h[17]+offset)%ce.icons.length;
 
+  const iconColorSeed = (h[4]^h[10]^h[16]+offset)&0xFF;
   return {
     abbr, category:ce.category, iconKey:`${ce.category}_${iconIdx}`, useText:false,
-    palette, palette_idx, shape, gradient,
+    palette, palette_idx, shape, gradient, iconColorSeed,
     combo_key:`${palette}-${shape}-${gradient}-${ce.category}_${iconIdx}`,
   };
 }
