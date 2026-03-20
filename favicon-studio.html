@@ -7,155 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
-// ══ ICON LIBRARY ══════════════════════════════════════════════════════════════
-const ilIconByLib = {}; // 'lucide:sun' / 'phosphor:Leaf:bold' → {paths,stroke,srcSize}
-let ilCurCat = null;
-
-function ilBuildIndex() {
-  for (const entry of ICON_MAP) {
-    entry.icons.forEach((ico, idx) => {
-      if (!ico.lib) return;
-      const sym = iconSymbols[`${entry.category}_${idx}`];
-      if (!sym) return;
-      const lk = ico.weight ? `${ico.lib}:${ico.name}:${ico.weight}` : `${ico.lib}:${ico.name}`;
-      if (!ilIconByLib[lk]) ilIconByLib[lk] = sym;
-    });
-  }
-}
-
-function openIL() {
-  document.getElementById('il-modal').style.display = 'flex';
-  ilRenderSidebar();
-  ilRenderCategory(ICON_MAP[0]?.category);
-}
-function closeIL() { document.getElementById('il-modal').style.display = 'none'; }
-
-function ilRenderSidebar() {
-  const total = ICON_MAP.reduce((s, e) => s + e.icons.length, 0);
-  document.getElementById('il-total').textContent = total + ' іконок';
-  document.getElementById('il-sidebar').innerHTML = ICON_MAP.map(e =>
-    `<div class="il-cat${ilCurCat===e.category?' active':''}" onclick="ilRenderCategory('${e.category}')">
-       <span>${e.category}</span><span class="il-cn">${e.icons.length}</span>
-     </div>`
-  ).join('');
-}
-
-function ilRenderCategory(catName) {
-  ilCurCat = catName;
-  const entry = ICON_MAP.find(e => e.category === catName);
-  if (!entry) return;
-  document.querySelectorAll('.il-cat').forEach(el =>
-    el.classList.toggle('active', el.querySelector('span')?.textContent === catName)
-  );
-  document.getElementById('il-cat-name').textContent = catName;
-  document.getElementById('il-cat-count').textContent = entry.icons.length + ' іконок';
-  document.getElementById('il-add-status').textContent = '';
-
-  document.getElementById('il-grid').innerHTML = entry.icons.map((ico, idx) => {
-    const key = `${catName}_${idx}`;
-    const sym = iconSymbols[key];
-    const preview = sym && sym.paths && sym.paths.trim() ? ilPreviewSVG(sym) : '<div class="il-no-icon">?</div>';
-    const label = ico.lib ? `${ico.lib}:${ico.name}${ico.weight?':'+ico.weight:''}` : `sprite:${ico.name}`;
-    return `<div class="il-card">
-      ${preview}
-      <div class="il-card-label">${label}</div>
-      <button class="il-del" onclick="ilDelete('${catName}',${idx})" title="Видалити">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function ilPreviewSVG(sym) {
-  const tf = iconRenderTransform(sym.srcSize);
-  const style = sym.stroke
-    ? 'fill:none;stroke:#2B3A55;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round'
-    : 'fill:#2B3A55;stroke:none';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="48" height="48">
-    <rect width="32" height="32" rx="7" fill="#E8ECF5"/>
-    <g transform="${tf}" style="${style}">${sym.paths}</g>
-  </svg>`;
-}
-
-function ilDelete(catName, iconIdx) {
-  const entry = ICON_MAP.find(e => e.category === catName);
-  if (!entry) return;
-  const ico = entry.icons[iconIdx];
-  const label = ico.lib ? `${ico.lib}:${ico.name}${ico.weight?':'+ico.weight:''}` : ico.name;
-  if (!confirm(`Видалити "${label}" з категорії "${catName}"?`)) return;
-
-  // Shift iconSymbols keys after deleted index
-  for (let i = iconIdx; i < entry.icons.length - 1; i++) {
-    iconSymbols[`${catName}_${i}`] = iconSymbols[`${catName}_${i+1}`];
-  }
-  delete iconSymbols[`${catName}_${entry.icons.length - 1}`];
-  entry.icons.splice(iconIdx, 1);
-
-  ilRenderCategory(catName);
-  ilRenderSidebar();
-}
-
-async function ilAddIcon() {
-  const lib    = document.getElementById('il-add-lib').value;
-  const name   = document.getElementById('il-add-name').value.trim();
-  const weight = document.getElementById('il-add-weight').value;
-  const status = document.getElementById('il-add-status');
-  if (!name) { status.textContent = '⚠ Введіть назву іконки'; status.style.color='var(--warn)'; return; }
-
-  const lk = weight ? `${lib}:${name}:${weight}` : `${lib}:${name}`;
-  status.textContent = `Пошук ${lk}…`; status.style.color='var(--text2)';
-
-  let sym = ilIconByLib[lk];
-
-  if (!sym) {
-    // CDN fallback (5s timeout)
-    let url;
-    try {
-      url = lib==='phosphor' ? CDN_URL.phosphor(name, weight||'regular') : CDN_URL[lib]?.(name);
-      if (!url) throw new Error('unknown lib');
-    } catch(e) { status.textContent=`⚠ Невідома бібліотека`; status.style.color='var(--warn)'; return; }
-
-    try {
-      const ac = new AbortController(); setTimeout(()=>ac.abort(),5000);
-      const r = await fetch(url,{signal:ac.signal});
-      if (!r.ok) throw new Error('404');
-      const svgText = await r.text();
-      const isStroke = lib==='lucide'||lib==='tabler';
-      const srcSize  = lib==='phosphor'?256:lib==='bootstrap'?16:24;
-      sym = wrapCdnIcon(svgText, isStroke, srcSize);
-    } catch(e) {
-      status.textContent = `✗ Не знайдено: ${lk}`; status.style.color='var(--warn)'; return;
-    }
-  }
-
-  if (!sym) { status.textContent=`✗ Порожня іконка`; status.style.color='var(--warn)'; return; }
-
-  const entry = ICON_MAP.find(e => e.category === ilCurCat);
-  if (!entry) return;
-  const newIdx = entry.icons.length;
-  entry.icons.push(weight ? {name,lib,weight} : {name,lib});
-  iconSymbols[`${ilCurCat}_${newIdx}`] = sym;
-  ilIconByLib[lk] = sym;
-
-  status.textContent = `✓ ${lk} додано`; status.style.color='var(--green)';
-  document.getElementById('il-add-name').value = '';
-  ilRenderCategory(ilCurCat);
-  ilRenderSidebar();
-}
-
-function ilDownload() {
-  const lines = ICON_MAP.map(entry => {
-    const icons = entry.icons.map(ico => {
-      if (ico.weight) return `      {name:'${ico.name}', lib:'${ico.lib}', weight:'${ico.weight}'},`;
-      if (ico.lib)    return `      {name:'${ico.name}', lib:'${ico.lib}'},`;
-      return `      {name:'${ico.name}'},`;
-    }).join('\n');
-    return `  {\n    category: '${entry.category}',\n    keywords: ${JSON.stringify(entry.keywords)},\n    icons: [\n${icons}\n    ],\n    palette_bias: ${JSON.stringify(entry.palette_bias)},\n  }`;
-  }).join(',\n');
-  const content = `// Generated by Icon Library — paste into build-icons.js\nconst ICON_MAP = [\n${lines}\n];\n`;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([content],{type:'text/javascript'}));
-  a.download = 'ICON_MAP.js'; a.click();
-}
-// ══ END ICON LIBRARY ══════════════════════════════════════════════════════════
 
 </script>
 <style>
@@ -4826,7 +4677,6 @@ async function loadIconsSprite() {
     lbl.textContent = `✓ ${built} іконок готові (offline)`;
     iconsReady = true;
     document.getElementById('btn-gen').disabled = false;
-    ilBuildIndex();
   } catch (err) {
     console.error('loadIconsSprite:', err);
     lbl.textContent = '⚠ Помилка іконок: ' + err.message;
@@ -5250,6 +5100,156 @@ document.getElementById('btn-zip').addEventListener('click',downloadZip);
 // INIT
 // ═══════════════════════════════════════════════════════════
 loadIconsSprite();
+// ══ ICON LIBRARY ══════════════════════════════════════════════════════════════
+const ilIconByLib = {}; // 'lucide:sun' / 'phosphor:Leaf:bold' → {paths,stroke,srcSize}
+let ilCurCat = null;
+
+function ilBuildIndex() {
+  for (const entry of ICON_MAP) {
+    entry.icons.forEach((ico, idx) => {
+      if (!ico.lib) return;
+      const sym = iconSymbols[`${entry.category}_${idx}`];
+      if (!sym) return;
+      const lk = ico.weight ? `${ico.lib}:${ico.name}:${ico.weight}` : `${ico.lib}:${ico.name}`;
+      if (!ilIconByLib[lk]) ilIconByLib[lk] = sym;
+    });
+  }
+}
+
+function openIL() {
+  document.getElementById('il-modal').style.display = 'flex';
+  ilRenderSidebar();
+  ilRenderCategory(ICON_MAP[0]?.category);
+}
+function closeIL() { document.getElementById('il-modal').style.display = 'none'; }
+
+function ilRenderSidebar() {
+  const total = ICON_MAP.reduce((s, e) => s + e.icons.length, 0);
+  document.getElementById('il-total').textContent = total + ' іконок';
+  document.getElementById('il-sidebar').innerHTML = ICON_MAP.map(e =>
+    `<div class="il-cat${ilCurCat===e.category?' active':''}" onclick="ilRenderCategory('${e.category}')">
+       <span>${e.category}</span><span class="il-cn">${e.icons.length}</span>
+     </div>`
+  ).join('');
+}
+
+function ilRenderCategory(catName) {
+  ilCurCat = catName;
+  const entry = ICON_MAP.find(e => e.category === catName);
+  if (!entry) return;
+  document.querySelectorAll('.il-cat').forEach(el =>
+    el.classList.toggle('active', el.querySelector('span')?.textContent === catName)
+  );
+  document.getElementById('il-cat-name').textContent = catName;
+  document.getElementById('il-cat-count').textContent = entry.icons.length + ' іконок';
+  document.getElementById('il-add-status').textContent = '';
+
+  document.getElementById('il-grid').innerHTML = entry.icons.map((ico, idx) => {
+    const key = `${catName}_${idx}`;
+    const sym = iconSymbols[key];
+    const preview = sym && sym.paths && sym.paths.trim() ? ilPreviewSVG(sym) : '<div class="il-no-icon">?</div>';
+    const label = ico.lib ? `${ico.lib}:${ico.name}${ico.weight?':'+ico.weight:''}` : `sprite:${ico.name}`;
+    return `<div class="il-card">
+      ${preview}
+      <div class="il-card-label">${label}</div>
+      <button class="il-del" onclick="ilDelete('${catName}',${idx})" title="Видалити">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function ilPreviewSVG(sym) {
+  const tf = iconRenderTransform(sym.srcSize);
+  const style = sym.stroke
+    ? 'fill:none;stroke:#2B3A55;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round'
+    : 'fill:#2B3A55;stroke:none';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="48" height="48">
+    <rect width="32" height="32" rx="7" fill="#E8ECF5"/>
+    <g transform="${tf}" style="${style}">${sym.paths}</g>
+  </svg>`;
+}
+
+function ilDelete(catName, iconIdx) {
+  const entry = ICON_MAP.find(e => e.category === catName);
+  if (!entry) return;
+  const ico = entry.icons[iconIdx];
+  const label = ico.lib ? `${ico.lib}:${ico.name}${ico.weight?':'+ico.weight:''}` : ico.name;
+  if (!confirm(`Видалити "${label}" з категорії "${catName}"?`)) return;
+
+  // Shift iconSymbols keys after deleted index
+  for (let i = iconIdx; i < entry.icons.length - 1; i++) {
+    iconSymbols[`${catName}_${i}`] = iconSymbols[`${catName}_${i+1}`];
+  }
+  delete iconSymbols[`${catName}_${entry.icons.length - 1}`];
+  entry.icons.splice(iconIdx, 1);
+
+  ilRenderCategory(catName);
+  ilRenderSidebar();
+}
+
+async function ilAddIcon() {
+  const lib    = document.getElementById('il-add-lib').value;
+  const name   = document.getElementById('il-add-name').value.trim();
+  const weight = document.getElementById('il-add-weight').value;
+  const status = document.getElementById('il-add-status');
+  if (!name) { status.textContent = '⚠ Введіть назву іконки'; status.style.color='var(--warn)'; return; }
+
+  const lk = weight ? `${lib}:${name}:${weight}` : `${lib}:${name}`;
+  status.textContent = `Пошук ${lk}…`; status.style.color='var(--text2)';
+
+  let sym = ilIconByLib[lk];
+
+  if (!sym) {
+    // CDN fallback (5s timeout)
+    let url;
+    try {
+      url = lib==='phosphor' ? CDN_URL.phosphor(name, weight||'regular') : CDN_URL[lib]?.(name);
+      if (!url) throw new Error('unknown lib');
+    } catch(e) { status.textContent=`⚠ Невідома бібліотека`; status.style.color='var(--warn)'; return; }
+
+    try {
+      const ac = new AbortController(); setTimeout(()=>ac.abort(),5000);
+      const r = await fetch(url,{signal:ac.signal});
+      if (!r.ok) throw new Error('404');
+      const svgText = await r.text();
+      const isStroke = lib==='lucide'||lib==='tabler';
+      const srcSize  = lib==='phosphor'?256:lib==='bootstrap'?16:24;
+      sym = wrapCdnIcon(svgText, isStroke, srcSize);
+    } catch(e) {
+      status.textContent = `✗ Не знайдено: ${lk}`; status.style.color='var(--warn)'; return;
+    }
+  }
+
+  if (!sym) { status.textContent=`✗ Порожня іконка`; status.style.color='var(--warn)'; return; }
+
+  const entry = ICON_MAP.find(e => e.category === ilCurCat);
+  if (!entry) return;
+  const newIdx = entry.icons.length;
+  entry.icons.push(weight ? {name,lib,weight} : {name,lib});
+  iconSymbols[`${ilCurCat}_${newIdx}`] = sym;
+  ilIconByLib[lk] = sym;
+
+  status.textContent = `✓ ${lk} додано`; status.style.color='var(--green)';
+  document.getElementById('il-add-name').value = '';
+  ilRenderCategory(ilCurCat);
+  ilRenderSidebar();
+}
+
+function ilDownload() {
+  const lines = ICON_MAP.map(entry => {
+    const icons = entry.icons.map(ico => {
+      if (ico.weight) return `      {name:'${ico.name}', lib:'${ico.lib}', weight:'${ico.weight}'},`;
+      if (ico.lib)    return `      {name:'${ico.name}', lib:'${ico.lib}'},`;
+      return `      {name:'${ico.name}'},`;
+    }).join('\n');
+    return `  {\n    category: '${entry.category}',\n    keywords: ${JSON.stringify(entry.keywords)},\n    icons: [\n${icons}\n    ],\n    palette_bias: ${JSON.stringify(entry.palette_bias)},\n  }`;
+  }).join(',\n');
+  const content = `// Generated by Icon Library — paste into build-icons.js\nconst ICON_MAP = [\n${lines}\n];\n`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content],{type:'text/javascript'}));
+  a.download = 'ICON_MAP.js'; a.click();
+}
+// ══ END ICON LIBRARY ══════════════════════════════════════════════════════════
+
 </script>
 
 <!-- ICON LIBRARY MODAL -->
